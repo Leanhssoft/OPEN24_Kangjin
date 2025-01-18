@@ -399,14 +399,14 @@
                                                 </div>
                                             </div>
                                             <div class="op-object-detail-function">
-                                                <!--ko if: ChoThanhToan=== false && !$root.wasKhoaSo() && ConNo > 0 && $root.RoleTGT_TatToanCongNo()-->
+                                                <!--ko if: ChoThanhToan=== false && LoaiHoaDon == 22 && !$root.wasKhoaSo() && ConNo > 0 && $root.RoleTGT_TatToanCongNo()-->
                                                 <button href="javascript:void(0)" class="btn"
                                                         style=" background: sienna; color: white    "
                                                         data-bind="click: $root.vm_ShowModalTatToanThe">
                                                     <i class="far fa-do-not-enter"></i> Tất toán công nợ thẻ
                                                 </button>
                                                 <!-- /ko-->
-                                                <!--ko if: ChoThanhToan=== false && !$root.wasKhoaSo()-->
+                                                <!--ko if: ChoThanhToan=== false && LoaiHoaDon == 22&& !$root.wasKhoaSo()-->
                                                 <button href="javascript:void(0)" class="btn btn-main " data-bind="click: $root.vm_showModalDiscount">
                                                     <i class="fa fa-edit" aria-hidden="true"></i> Sửa đổi chiết khấu nhân viên
                                                 </button>

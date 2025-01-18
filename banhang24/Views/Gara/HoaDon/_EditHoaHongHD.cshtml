@@ -172,11 +172,14 @@
                     <button type="button" class="btn btn-cancel" data-dismiss="modal">
                         <i class="fa fa-ban"></i> Hủy
                     </button>
+                    <button type="button" class="btn btn-save" v-if="isLoading">
+                        <i class="fa fa-save"></i> Đang lưu
+                    </button>
                     <button type="button" class="btn btn-save" v-if="isNew" v-on:click="AgreeDiscount">
-                        <i class="fa fa-save"></i>
+                        <i class="fa fa-save"></i> 
                         Đồng ý
-                    </button> 
-                    <button type="button" class="btn btn-save" v-if="!isNew" v-on:click="AgreeDiscount">
+                    </button>
+                    <button type="button" class="btn btn-save" v-if="!isNew && !isLoading" v-on:click="AgreeDiscount">
                         <i class="fa fa-save"></i>
                         Cập nhật
                     </button>

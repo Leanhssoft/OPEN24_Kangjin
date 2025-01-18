@@ -536,7 +536,7 @@
                     self.showCheckHachToan = false;
                     self.HoaDonChosing = item;
 
-                    self.newPhieuThu.LoaiHoaDon = item.LoaiHoaDon === 6 ? 12 : 11;
+                    self.newPhieuThu.LoaiHoaDon = (item.LoaiHoaDon === 6 || item.LoaiHoaDon === 32) ? 12 : 11;
 
                     var nguoinop = [];
                     var invoice = [];

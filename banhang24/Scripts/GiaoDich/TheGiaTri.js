@@ -1188,8 +1188,7 @@
                 item.TongTienThue = 0;
                 item.MaDoiTuong = item.MaKhachHang;
                 item.TenDoiTuong = item.TenKhachHang;
-                item.DienThoai = item.SoDienThoai;
-                item.LoaiHoaDon = 22;
+                item.DienThoai = item.SoDienThoai;               
                 vmThanhToan.showModalThanhToan(item);
             }
         })
