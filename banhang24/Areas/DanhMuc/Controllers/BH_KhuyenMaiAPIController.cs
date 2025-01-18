@@ -13,12 +13,179 @@ using static libQuy_HoaDon.ClassKhuyenMai;
 using libDM_HangHoa;
 using System.Data.SqlClient;
 using libDM_DoiTuong;
+using NPOI.SS.Formula.Functions;
+using Model.DTO;
+using System.Runtime.Remoting;
+using System.Data.Entity;
 
 namespace banhang24.Areas.DanhMuc.Controllers
 {
-    public class BH_KhuyenMaiAPIController : ApiController
+    public class BH_KhuyenMaiAPIController : BaseApiController
     {
         #region Insert
+        [HttpPost]
+        public IHttpActionResult PostDM_KhuyenMai([FromBody] JObject data)
+        {
+            using (SsoftvnContext db = SystemDBContext.GetDBContext())
+            {
+                try
+                {
+                    ClassKhuyenMai classKhuyenMai = new ClassKhuyenMai(db);
+                    if (data["objKhuyenMai"] != null)
+                    {
+                        DM_KhuyenMai objNew = data["objKhuyenMai"].ToObject<DM_KhuyenMai>();
+
+                        var maKhuyenMai = objNew.MaKhuyenMai;
+                        if (string.IsNullOrEmpty(maKhuyenMai))
+                        {
+                            maKhuyenMai = classKhuyenMai.GetAutoCode();
+                        }
+                        objNew.ID = Guid.NewGuid();
+                        objNew.MaKhuyenMai = maKhuyenMai;
+                        objNew.NgayTao = DateTime.Now;
+                        db.DM_KhuyenMai.Add(objNew);
+                        db.SaveChanges();
+                        return ActionTrueData(objNew);
+                    }
+                    return ActionFalseNotData("không có dữ liệu");
+                }
+                catch (Exception ex)
+                {
+                    return ActionFalseNotData(ex.Message);
+                }
+            }
+        }
+        public IHttpActionResult PutDM_KhuyenMai([FromBody] JObject data)
+        {
+            using (SsoftvnContext db = SystemDBContext.GetDBContext())
+            {
+                try
+                {
+                    ClassKhuyenMai classKhuyenMai = new ClassKhuyenMai(db);
+                    if (data["objKhuyenMai"] != null)
+                    {
+                        DM_KhuyenMai obj = data["objKhuyenMai"].ToObject<DM_KhuyenMai>();
+                        var maKhuyenMai = obj.MaKhuyenMai;
+
+                        DM_KhuyenMai objUpdate = db.DM_KhuyenMai.Find(obj.ID);
+                        if (objUpdate != null)
+                        {
+                            if (string.IsNullOrEmpty(maKhuyenMai))
+                            {
+                                maKhuyenMai = classKhuyenMai.GetAutoCode();
+                            }
+                            objUpdate.MaKhuyenMai = maKhuyenMai;
+                            objUpdate.TenKhuyenMai = obj.TenKhuyenMai;
+                            objUpdate.GhiChu = obj.GhiChu;
+                            objUpdate.TrangThai = obj.TrangThai;
+                            objUpdate.LoaiKhuyenMai = obj.LoaiKhuyenMai;
+                            objUpdate.HinhThuc = obj.HinhThuc;
+                            objUpdate.ThoiGianBatDau = obj.ThoiGianBatDau;
+                            objUpdate.ThoiGianKetThuc = obj.ThoiGianKetThuc;
+                            objUpdate.ThangApDung = obj.ThangApDung;
+                            objUpdate.NgayApDung = obj.NgayApDung;
+                            objUpdate.ThuApDung = obj.ThuApDung;
+                            objUpdate.GioApDung = obj.GioApDung;
+                            objUpdate.ApDungNgaySinhNhat = obj.ApDungNgaySinhNhat;
+                            objUpdate.TatCaDonVi = obj.TatCaDonVi;
+                            objUpdate.TatCaDoiTuong = obj.TatCaDoiTuong;
+                            objUpdate.TatCaNhanVien = obj.TatCaNhanVien;
+                            objUpdate.NguoiSua = obj.NguoiSua;
+                            objUpdate.NgaySua = DateTime.Now;
+
+                            db.Entry(objUpdate).State = EntityState.Modified;
+                            db.SaveChanges();
+                            return ActionTrueData(objUpdate);
+                        }
+                    }
+                    return ActionFalseNotData("không có dữ liệu");
+                }
+                catch (Exception ex)
+                {
+                    return ActionFalseNotData(ex.Message);
+                }
+            }
+        }
+        [HttpPost]
+        public IHttpActionResult PostDM_KhuyenMaiChiTiet(Guid idKhuyenMai, [FromBody] JObject data)
+        {
+            using (SsoftvnContext db = SystemDBContext.GetDBContext())
+            {
+                using (var trans = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        ClassKhuyenMai classKhuyenMai = new ClassKhuyenMai(db);
+                        if (data["lstChiTietKM"] != null)
+                        {
+                            List<DM_KhuyenMai_ChiTiet> lst = data["lstChiTietKM"].ToObject<List<DM_KhuyenMai_ChiTiet>>();
+                            // remove & add again
+                            var lstRemove = db.DM_KhuyenMai_ChiTiet.Where(x => x.ID_KhuyenMai == idKhuyenMai);
+                            db.DM_KhuyenMai_ChiTiet.RemoveRange(lstRemove);
+
+                            List<DM_KhuyenMai_ChiTiet> lstAdd = new List<DM_KhuyenMai_ChiTiet>();
+                            foreach (var item in lst)
+                            {
+                                DM_KhuyenMai_ChiTiet ctNew = item;
+                                ctNew.ID = Guid.NewGuid();
+                                ctNew.ID_KhuyenMai = idKhuyenMai;
+                                lstAdd.Add(ctNew);
+                            }
+                            db.DM_KhuyenMai_ChiTiet.AddRange(lstAdd);
+                            db.SaveChanges();
+                            trans.Commit();
+                            return ActionTrueData(string.Empty);
+                        }
+                        return ActionFalseNotData("không có dữ liệu");
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        return ActionFalseNotData(ex.Message);
+                    }
+                }
+            }
+        }
+        [HttpPost]
+        public IHttpActionResult PostDM_KhuyenMaiApDung(Guid idKhuyenMai, [FromBody] JObject data)
+        {
+            using (SsoftvnContext db = SystemDBContext.GetDBContext())
+            {
+                using (var trans = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        ClassKhuyenMai classKhuyenMai = new ClassKhuyenMai(db);
+                        if (data["objKhuyenMaiApDung"] != null)
+                        {
+                            List<DM_KhuyenMai_ApDung> lst = data["objKhuyenMaiApDung"].ToObject<List<DM_KhuyenMai_ApDung>>();
+                            // remove & add again
+                            var lstRemove = db.DM_KhuyenMai_ApDung.Where(x => x.ID_KhuyenMai == idKhuyenMai);
+                            db.DM_KhuyenMai_ApDung.RemoveRange(lstRemove);
+
+                            List<DM_KhuyenMai_ApDung> lstAdd = new List<DM_KhuyenMai_ApDung>();
+                            foreach (var item in lst)
+                            {
+                                DM_KhuyenMai_ApDung ctNew = item;
+                                ctNew.ID = Guid.NewGuid();
+                                ctNew.ID_KhuyenMai = idKhuyenMai;
+                                lstAdd.Add(ctNew);
+                            }
+                            db.DM_KhuyenMai_ApDung.AddRange(lstAdd);
+                            db.SaveChanges();
+                            trans.Commit();
+                            return ActionTrueData(string.Empty);
+                        }
+                        return ActionFalseNotData("không có dữ liệu");
+                    }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        return ActionFalseNotData(ex.Message);
+                    }
+                }
+            }
+        }
         [HttpPost, ActionName("PostBH_KhuyenMai")]
         [ResponseType(typeof(DM_KhuyenMai))]
         public IHttpActionResult PostBH_KhuyenMai([FromBody] JObject data, string dateStart, string dateEnd, Guid ID_DonVi, Guid ID_NhanVien)
@@ -863,6 +1030,14 @@ namespace banhang24.Areas.DanhMuc.Controllers
         }
         #endregion
         #region Select
+        public bool CheckExists_MaKhuyenMai(Guid idKhuyenMai, string maKhuyenMai)
+        {
+            using (SsoftvnContext db = SystemDBContext.GetDBContext())
+            {
+                ClassKhuyenMai classKhuyenMai = new ClassKhuyenMai(db);
+                return classKhuyenMai.CheckExists_MaKhuyenMai(idKhuyenMai, maKhuyenMai);
+            }
+        }
         public string get_CheckKhuyenMai(string MaKM)
         {
             using (SsoftvnContext db = SystemDBContext.GetDBContext())

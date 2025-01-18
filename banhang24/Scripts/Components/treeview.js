@@ -75,25 +75,25 @@ var cmpTreeView = {
                             style="padding-top: 5px;padding-bottom: 5px"
                             v-bind:style="[idChosing === item.id ? {'background':'#eee'} : {'background':'none'}]">
                              <div class="col-sm-12 col-lg-12 col-md-12 group-p1">
-                                <div class="form-check flex">
+                                <div class="form-check flex" v-on:click="choseItem(item,1)">
                                   <input class="form-check-input" type="checkbox" v-if="isCheck" >
                                   <input class="form-check-input" type="radio" name="rdoTree"  
                                         v-if="isRdo"
                                         v-bind:checked="item.id == idChosing">
-                                  <label class="form-check-label" for="gridCheck" v-on:click="choseItem(item,1)"> {{item.text}} </label>                     
+                                  <label class="form-check-label" for="gridCheck" > {{item.text}} </label>                     
                                   <a v-if="roleEdit" v-on:click="editItem(item,1)"><i class="fa fa-edit"> </i> </a>
                                 </div> 
                                     <ul>
                                         <li v-for="(item2,index2) in item.children"
                                             >
                                             <div class="col-sm-12 col-lg-12 col-md-12 group-p2">
-                                                <div class="form-check flex">
+                                                <div class="form-check flex" v-on:click="choseItem(item2,2)">
                                                   <input class="form-check-input" type="checkbox"
                                                          v-if="isCheck"> 
                                                   <input class="form-check-input" type="radio" name="rdoTree"
                                                           v-if="isRdo"
                                                           v-bind:checked="item2.id == idChosing">
-                                                  <label class="form-check-label" for="gridCheck" v-on:click="choseItem(item2,2)"> {{item2.text}} </label>
+                                                  <label class="form-check-label" for="gridCheck" > {{item2.text}} </label>
                                                    <a v-if="roleEdit" v-on:click="editItem(item2,2)"><i class="fa fa-edit"> </i> </a>
                                                 </div> 
                                             </div>      

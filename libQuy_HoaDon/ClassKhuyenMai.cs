@@ -23,6 +23,26 @@ namespace libQuy_HoaDon
             db = _db;
         }
         //Kiểm tra mã khuyến mại
+        public bool CheckExists_MaKhuyenMai(Guid idKhuyenMai, string maKhuyenMai)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(maKhuyenMai)) return false;
+                if (idKhuyenMai == null || idKhuyenMai == Guid.Empty)
+                {
+                    return db.DM_KhuyenMai.Count(e => e.MaKhuyenMai == maKhuyenMai) > 0;
+                }
+                else
+                {
+                    return db.DM_KhuyenMai.Count(e => e.ID != idKhuyenMai && e.MaKhuyenMai == maKhuyenMai) > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                CookieStore.WriteLog("CheckExists_MaKhuyenMai" + ex);
+                return true;
+            }
+        }
         public bool Check_MaKhuyenMai(string maKhuyenMai)
         {
             if (db == null)

@@ -12,7 +12,7 @@
     var allContent = '<html>' +
         '<head>'.concat(`<style> tr.mauin-tr-netlien td { border-bottom: 1px solid #ccc; } 
                                 tr.mauin-tr-netdut td { border-bottom: 1px dashed #ccc; }
-                                table.mauin-table-baoquanh{
+                                table.mauin-table-baoquanh{``
                                     border: 1px solid black;
                                 }
                                 table.mauin-table-baoquanh td,table.mauin-table-baoquanh th{
@@ -334,7 +334,7 @@ var LocalCaches = LocalCaches || (function () {
         else {
             return localStorage.getItem(Key_ThemeColor);
         }
-    };
+    };   
     return {
         loadFIlterAdvanced: loadFIlterAdvanced,
         keyHangHoa: NameScreenHangHoa,
@@ -346,7 +346,7 @@ var LocalCaches = LocalCaches || (function () {
         GetThemeColor: GetThemeColor,
         CheckColumnGridWithObj: CheckColumnGridWithObj,
         RemoveLoHang: RemoveLoHang,
-        LoadFormLoHang: LoadFormLoHang
+        LoadFormLoHang: LoadFormLoHang,
     };
 })();
 function setColorThemeProperty(property, value) {
@@ -932,6 +932,21 @@ var commonStatisJs = commonStatisJs || (function () {
         }
         return false;
     }
+    var LoaiKhuyenMai = {
+           HOA_DON:1,
+           HANG_HOA:2,
+    }
+    var HinhThucKhuyenMai = {
+       HD_GIAM_GIAHD:11,
+       HD_TANG_HANG:12,
+       HD_GIAM_GIA_HANG:13,
+       HD_TANG_DIEM:14,
+
+        HH_GIAM_GIA_HANG:21,
+       HH_TANG_HANG:22,
+       HH_TANG_DIEM:23,
+       HH_GIA_BAN_THEO_SO_LUONG:24,
+    }
 
     return {
         ChangeThemeColor: ChangeThemeColor,
@@ -970,7 +985,9 @@ var commonStatisJs = commonStatisJs || (function () {
         TableRowRemoveFocus: tableRowRemoveFocus,
         FirstChar_UpperCase: FirstChar_UpperCase,
         checkSizeImage: checkSizeImage,
-        NPOI_ExportExcel: NPOI_ExportExcel
+        NPOI_ExportExcel: NPOI_ExportExcel,
+        LoaiKhuyenMai: LoaiKhuyenMai,
+        HinhThucKhuyenMai: HinhThucKhuyenMai
     };
 })();
 commonStatisJs.ChangeThemeColor(LocalCaches.GetThemeColor(), false);

@@ -4796,7 +4796,6 @@ namespace banhang24.Areas.DanhMuc.Controllers
                 string fileTeamplate = HttpContext.Current.Server.MapPath("~/Template/ExportExcel/Report/BaoCaoKho/Teamplate_BaoCaoHangXuatKhoTheoDichVuDinhLuong.xlsx");
                 List<ClassExcel_CellData> lstCell = classNPOI.GetValue_forCell(param.TenChiNhanh, param.TodayBC);
                 classNPOI.ExportDataToExcel(fileTeamplate, excel, 5, columnRemove, lstCell);
-                //classOffice.listToOfficeExcel_Stype(fileTeamplate, fileSave, excel, 5, 28, 23, true, columnRemove, param.TodayBC, param.TenChiNhanh);
                 return string.Empty;
             }
         }
