@@ -2963,6 +2963,14 @@ var NewModel_BanHangLe = function () {
         }
     }
 
+    async function CheckHDGoc_DaBiHuy(idHoaDon) {
+        const xx = ajaxHelper(BHHoaDonUri + 'CheckHDGoc_DaBiHuy?idHoaDon=' + idHoaDon).done()
+            .then(function (data) {
+                return data;
+            });
+        return xx;
+    }
+
     self.saveHoaDonTraHang = async function (isTamLuu) {
         // check role LuuNhap
         if (isTamLuu) {
@@ -2994,6 +3002,16 @@ var NewModel_BanHangLe = function () {
             var itemHD = GetHDOpening_byMaHoaDon(_maHoaDon, lstHDTemp);
             if (itemHD.length > 0) {
 
+                // check nếu trả hàng từ GDV đã bị hủy
+                if (!commonStatisJs.CheckNull(itemHD[0].ID_HoaDon)) {
+                    const checkHuy = await CheckHDGoc_DaBiHuy(itemHD[0].ID_HoaDon);
+                    if (checkHuy) {
+                        SaveHD_RemoveDisable();
+                        ShowMessage_Danger(itemHD[0].MaHoaDonTraHang + ' đã bị hủy, không thể đổi trả');
+                        return;
+                    }
+                }
+
                 var idRandomHD = itemHD[0].IDRandom;
                 var check = CheckNgayLapHD(itemHD[0].NgayLapHoaDon);
                 if (!check) {
@@ -3016,12 +3034,11 @@ var NewModel_BanHangLe = function () {
 
                 //  HD Tra
                 if (itemHD[0].LoaiHoaDon === 6) {
+                    // nếu lẻ tiền --> chênh lệch mấy phẩy nên phải làm tròn rồi mới so sánh
+                    let datrakhach = RoundDecimal(itemHD[0].DaTraKhach);
+                    let hoantra = RoundDecimal(itemHD[0].DaTraKhach);
+                    let tienthua = RoundDecimal(itemHD[0].TienThua);
                     if (itemHD[0].HoanTraTamUng > 0) {
-                        // nếu lẻ tiền --> chênh lệch mấy phẩy nên phải làm tròn rồi mới so sánh
-                        let datrakhach = RoundDecimal(itemHD[0].DaTraKhach);
-                        let hoantra = RoundDecimal(itemHD[0].DaTraKhach);
-                        let tienthua = RoundDecimal(itemHD[0].TienThua);
-
                         if (datrakhach > hoantra) {
                             ShowMessage_Danger('Vui lòng không nhập quá số tiền cần thanh toán');
                             SaveHD_RemoveDisable();

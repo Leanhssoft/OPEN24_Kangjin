@@ -152,17 +152,11 @@ namespace banhang24.Areas.DanhMuc.Controllers
                     excel.Columns.Remove("SumConNo");
 
                     string fileTeamplate = HttpContext.Current.Server.MapPath("~/Template/ExportExcel/Teamplate_DanhSachPhieuTrichHoaHong.xlsx");
-                    //fileSave = HttpContext.Current.Server.MapPath("~/Template/ExportExcel/DanhSachPhieuTrichHoaHong.xlsx");
-                    //fileSave = _classOFDCM.createFolder_Download(fileSave);
                     string columHide = string.Empty;
                     if (param.ColumnHide != null && param.ColumnHide.Count > 0)
                     {
                         columHide = string.Join("_", param.ColumnHide);
                     }
-                    //_classOFDCM.listToOfficeExcel_Sheet(fileTeamplate, fileSave, excel, 4, 28, 24, true, columHide, 0, param.ReportTime, param.ReportBranch);
-                    //var index = fileSave.IndexOf(@"\Template");
-                    //fileSave = "~" + fileSave.Substring(index, fileSave.Length - index);
-                    //fileSave = fileSave.Replace(@"\", "/");
                     List<ClassExcel_CellData> lstCell = classNPOI.GetValue_forCell(param.ReportBranch, param.ReportTime);
                     classNPOI.ExportDataToExcel(fileTeamplate, excel, 4, columHide, lstCell);
                 }
@@ -258,7 +252,6 @@ namespace banhang24.Areas.DanhMuc.Controllers
 
                     string fileTeamplate = HttpContext.Current.Server.MapPath("~/Template/ExportExcel/Teamplate_PhieuTrichHoaHongbyID.xlsx");
                     classNPOI.ExportDataToExcel(fileTeamplate, excel, 9, string.Empty, lstCell);
-                    //_classOFDCM.DataToExcel_WithText(fileTeamplate, fileSave, excel, 9, 17, 6, true, lstCell);
                 }
                 catch (Exception ex)
                 {
@@ -3362,6 +3355,24 @@ namespace banhang24.Areas.DanhMuc.Controllers
             catch (Exception ex)
             {
                 CookieStore.WriteLog("CheckXuLyHet_DonDathang " + ex.Message + ex.InnerException);
+                return false;
+            }
+        }
+
+        [HttpGet]
+        public bool CheckHDGoc_DaBiHuy(Guid idHoaDon)
+        {
+            try
+            {
+                using (SsoftvnContext db = SystemDBContext.GetDBContext())
+                {
+                    var data = db.BH_HoaDon.Where(x => x.ID == idHoaDon && x.ChoThanhToan == null).Count();
+                    return data > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                CookieStore.WriteLog("CheckHDGoc_DaBiHuy " + ex.Message + ex.InnerException);
                 return false;
             }
         }

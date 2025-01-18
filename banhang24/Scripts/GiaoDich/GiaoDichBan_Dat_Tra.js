@@ -6375,8 +6375,22 @@
         vmApDungNhomHoTro.showModalUpdate(item.ID, arrCTMew);
     }
 
-    self.XuatKho_withHD_chuaXuat = function (item) {
+    self.CheckHDGoc_DaBiHuy = async function (idHoaDon) {
+        const xx = ajaxHelper(BHHoaDonUri + 'CheckHDGoc_DaBiHuy?idHoaDon=' + idHoaDon).done()
+            .then(function (data) {
+                return data;
+            });
+        return xx;
+    }
+
+    self.XuatKho_withHD_chuaXuat = async function (item) {
         let idHoaDon = item.ID;
+
+        const check = await self.CheckHDGoc_DaBiHuy(idHoaDon);// hd đã hủy, nhưng chưa F5, và click xuất kho
+        if (check) {
+            ShowMessage_Danger('Hóa đơn ' + item.MaHoaDon +' đã bị hủy. Không thể xuất kho');
+            return;
+        }
 
         vmApDungNhomHoTro.CreatePhieuXuat_NguyenVatLieu(idHoaDon);
 
