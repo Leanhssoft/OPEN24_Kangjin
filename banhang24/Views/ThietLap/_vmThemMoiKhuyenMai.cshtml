@@ -113,7 +113,7 @@
 
                             @*các hình thức khuyến mại*@
                             <div style="margin-top:24px">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="box-shadow: 1px 2px 9px 2px #cccc;padding:16px;margin-top:24px; overflow:auto;max-height:300px">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="box-shadow: 1px 2px 9px 2px #cccc;padding:16px;margin-top:24px;">
 
                                     @*hoa don*@
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" v-if="objKhuyenMai.HinhThuc == commonStatisJs.HinhThucKhuyenMai.HD_GIAM_GIAHD">
@@ -169,7 +169,7 @@
                                             </div>
                                             <div class="col-lg-2 flex">
                                                 <input class="form-control" title="Số lượng tặng"
-                                                       v-model="ctkm.SoLuongTang"
+                                                       v-model="ctkm.SoLuong"
                                                        v-on:keyup="EditSoLuongTang(ctkm,index)" />
                                             </div>
                                             <div class="col-lg-6 flex flex-column"
@@ -234,7 +234,7 @@
                                             </div>
                                             <div class="col-lg-7 flex flex-row nopadding">
                                                 <div class="col-lg-3">
-                                                    <input class="form-control" title="Số lượng được giảm" placeholder="SL" />
+                                                    <input class="form-control" title="Số lượng được giảm" placeholder="SL" v-model="ctkm.SoLuong" />
                                                 </div>
                                                 <div class="col-lg-8 nopadding" v-on:click="SetIndexChosing(index)">
                                                     <products :id-chi-nhanh="inforLogin.ID_DonVi"
@@ -356,7 +356,7 @@
                                             <div class="col-lg-5 flex flex-row nopadding">
                                                 <div class="col-lg-3">
                                                     <input class="form-control" title="Số lượng hàng được giảm giá" placeholder="SL"
-                                                           v-model="ctkm.SoLuongTang"
+                                                           v-model="ctkm.SoLuong"
                                                            v-on:keyup="EditSoLuongTang(ctkm,index)" />
                                                 </div>
                                                 <div class="col-lg-8 nopadding" v-on:click="SetIndexChosing(index)">
@@ -432,7 +432,7 @@
                                             <div class="col-lg-6 flex flex-row nopadding">
                                                 <div class="col-lg-3">
                                                     <input class="form-control" title="Số lượng hàng tặng" placeholder="SL tặng"
-                                                           v-model="ctkm.SoLuongTang"
+                                                           v-model="ctkm.SoLuong"
                                                            v-on:keyup="EditSoLuongTang(ctkm,index)" />
                                                 </div>
                                                 <div class="col-lg-8 nopadding" v-on:click="SetIndexChosing(index)">
@@ -714,7 +714,7 @@
                                                        :type-data="6"
                                                        :have-condition="true"
                                                        :show-item-all="true"
-                                                       v-on:on-select-item="ChoseDay">
+                                                       v-on:on-select-item="ChoseDate">
                                     </dropdown-multiple>
                                 </div>
                             </div>
@@ -731,7 +731,7 @@
                                                        :type-data="6"
                                                        :have-condition="true"
                                                        :show-item-all="true"
-                                                       v-on:on-select-item="ChoseDay">
+                                                       v-on:on-select-item="ChoseHour">
                                     </dropdown-multiple>
                                 </div>
                             </div>
@@ -744,7 +744,7 @@
                                     <label>Chi nhánh</label>
                                 </div>
                                 <div class="col-lg-9">
-                                    <dropdown-multiple placeholder="Chọn thứ áp dụng"
+                                    <dropdown-multiple placeholder="Chọn chi nhánh áp dụng"
                                                        :list-all="listData.AllChiNhanhs"
                                                        :list-chosed="objKhuyenMai.arrChiNhanhApDung"
                                                        :colshow="1"
@@ -1056,6 +1056,49 @@
                     ]
                 }
             },
+            GetDMKhuyenMai_byId: async function (idKhuyenMai) {
+                let self = this;
+                const xx = await ajaxHelper(self.BH_KhuyenMaiAPI + "GetDMKhuyenMai_byId?idKhuyenMai=" + idKhuyenMai, "GET")
+                    .done().then(function (data) {
+                        return data;
+                    });
+                return xx;
+            },
+
+            GetChiTietKhuyenMai_byIdKhuyenMai: async function (idKhuyenMai) {
+                let self = this;
+                const xx = await ajaxHelper(self.BH_KhuyenMaiAPI + "getChiTiet_KhuyenMai?ID_KhuyenMai=" + idKhuyenMai, "GET")
+                    .done().then(function (data) {
+                        return data;
+                    });
+                return xx;
+            },
+            GetListChiNhanhApDung: async function (idKhuyenMai) {
+                let self = this;
+                const xx = await ajaxHelper(self.BH_KhuyenMaiAPI + "getLisDonViKM?ID_KhuyenMai=" + idKhuyenMai, "GET")
+                    .done().then(function (data) {
+                        return data;
+                    });
+                return xx;
+            },
+
+            GetListNhanVienApDung: async function (idKhuyenMai) {
+                let self = this;
+                const xx = await ajaxHelper(self.BH_KhuyenMaiAPI + "getlistNhanViemKM?ID_KhuyenMai=" + idKhuyenMai, "GET")
+                    .done().then(function (data) {
+                        return data;
+                    });
+                return xx;
+            },
+
+            GetListNhomKhachApDung: async function (idKhuyenMai) {
+                let self = this;
+                const xx = await ajaxHelper(self.BH_KhuyenMaiAPI + "getlistNhomHangKM?ID_KhuyenMai=" + idKhuyenMai, "GET")
+                    .done().then(function (data) {
+                        return data;
+                    });
+                return xx;
+            },
 
             showModal: async function () {
                 let self = this;
@@ -1080,6 +1123,7 @@
                     TatCaDoiTuong: true,
                     TatCaNhanVien: true,
                     TrangThai: 1, //1.active,0.no active
+                    NguoiTao: VHeader.UserLogin,
 
                     TxtLoaiKhuyenMai: 'Hóa đơn',
                     TxtHinhThuc: 'Giảm giá hóa đơn',
@@ -1093,6 +1137,96 @@
                     arrNhomKhachApDung: [],
                 };
 
+                $('#vmThemMoiKhuyenMai').modal('show');
+            },
+            showModalUpdate: async function (idKhuyenMai) {
+                let self = this;
+                self.typeUpdate = 2;
+                self.saveOK = false;
+                self.isSaving = false;
+                let dataKM = await self.GetDMKhuyenMai_byId(idKhuyenMai);
+                let ctKM = await self.GetChiTietKhuyenMai_byIdKhuyenMai(idKhuyenMai);
+
+                if (dataKM !== null) {
+                    self.objKhuyenMai = dataKM;
+                    self.objKhuyenMai.TrangThai = dataKM;
+
+                    self.objKhuyenMai.TxtLoaiKhuyenMai = dataKM.LoaiKhuyenMai === commonStatisJs.LoaiKhuyenMai.HOA_DON ? 'Hóa đơn' : 'Hàng hóa';
+                    let loaiKM = self.ArrHinhThucKhuyenMai.filter(x => x.ID.toString().indexOf(dataKM.LoaiKhuyenMai) == 0);
+                    self.objKhuyenMai.TxtHinhThuc = loaiKM.length > 0 ? loaiKM[0].Text2 : '';
+
+                    let arrThang = self.objKhuyenMai.ThangApDung.split(',').map(Number).sort(function (x, y) {
+                        let a = x; b = y;
+                        return a > b ? 1 : a < b ? -1 : 0
+                    });
+                    let arrNgay = self.objKhuyenMai.NgayApDung.split(',').map(Number).sort(function (x, y) {
+                        let a = x; b = y;
+                        return a > b ? 1 : a < b ? -1 : 0
+                    });
+                    let arrThu = self.objKhuyenMai.ThuApDung.split(',').map(Number).sort(function (x, y) {
+                        let a = x; b = y;
+                        return a > b ? 1 : a < b ? -1 : 0
+                    });;
+                    let arrGio = self.objKhuyenMai.GioApDung.split(',').map(Number).sort(function (x, y) {
+                        let a = x; b = y;
+                        return a > b ? 1 : a < b ? -1 : 0
+                    });;
+                    self.objKhuyenMai.arrThangApDung = [];
+                    self.objKhuyenMai.arrNgayApDung = [];
+                    self.objKhuyenMai.arrThuApDung = [];
+                    self.objKhuyenMai.arrGioApDung = [];
+                    for (let i = 0; i < arrThang.length; i++) {
+                        self.objKhuyenMai.arrThangApDung.push({ ID: arrThang[i], Text1: 'Tháng ' + arrThang[i] });
+                    }
+                    for (let i = 0; i < arrNgay.length; i++) {
+                        self.objKhuyenMai.arrNgayApDung.push({ ID: arrNgay[i], Text1: 'Ngày ' + arrNgay[i] });
+                    }
+                    for (let i = 0; i < arrThu.length; i++) {
+                        if (arrThu[i] === 8) {
+                            self.objKhuyenMai.arrThuApDung.push({ ID: arrNgay[i], Text1: 'Chủ nhật' });
+                        }
+                        else {
+                            self.objKhuyenMai.arrThuApDung.push({ ID: arrNgay[i], Text1: 'Ngày ' + arrNgay[i] });
+                        }
+                    }
+                    for (let i = 0; i < arrGio.length; i++) {
+                        self.objKhuyenMai.arrGioApDung.push({ ID: arrGio[i], Text1: arrGio[i] });
+                    }
+                }
+                ctKM.map(function (x) {
+                    x['TenHangHoaTang'] = x.TenHangHoa
+                    x['TenNhomHangHoaTang'] = x.TenNhomHangHoa
+                    x['details'] = [{
+                        STT: 0,
+                        SoLuongMua: '',
+                        loaiApDung: 1,// 1. giakhuyenmai, 2. giamgia
+                        txtLoaiApDung: 'Giá bán',
+                        GiaKhuyenMai: '',
+                        GiamGia: '',
+                        GiamGiaTheoPhanTram: true,
+                    }]
+                })
+                self.chitietKM = ctKM;
+
+                // apdung: nhanvien, chinhanh, nhomkhach
+                let chinhanhAD = await self.GetListChiNhanhApDung(idKhuyenMai);
+                chinhanhAD.map(function(x){
+                    x['Text1'] = x.TenDonVi
+                })
+                let nvApDung = await self.GetListNhanVienApDung(idKhuyenMai);
+                nvApDung.map(function(x){
+                    x['Text1'] = x.MaNhanVien
+                    x['Text2'] = x.TenNhanVien
+                }) 
+                
+                let nhomkhachAD = await self.GetListNhomKhachApDung(idKhuyenMai);
+                nhomkhachAD.map(function(x){
+                    x['Text1'] = x.TenNhomDoiTuong
+                })
+                console.log('cn ',chinhanhAD,nvApDung)
+                self.objKhuyenMai.arrChiNhanhApDung = chinhanhAD;
+                self.objKhuyenMai.arrNhanVienApDung = nvApDung;
+                self.objKhuyenMai.arrNhomKhachApDung = nhomkhachAD;
                 $('#vmThemMoiKhuyenMai').modal('show');
             },
             Loai24_ChangeLoaiApDung: function (item) {
@@ -1136,18 +1270,6 @@
             ClickThemDieuKien: function () {
                 let self = this;
                 self.chitietKM.push(self.newCTKM());
-                //switch (self.objKhuyenMai.HinhThuc) {
-                //    case commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG:
-                //        {
-                //            self.chitietKM.push(self.newCTKM());
-                //        }
-                //        break;
-                //    default:
-                //        {
-                //            self.chitietKM.push(self.newCTKM());
-                //        }
-                //        break;
-                //}
             },
             Loai24_ClickThemDong: function () {
                 let self = this;
@@ -1171,17 +1293,34 @@
                 let self = this;
                 self.objKhuyenMai.arrNgayApDung = lst;
             },
+            ChoseDate: function (lst) {
+                let self = this;
+                self.objKhuyenMai.arrThuApDung = lst;
+            },
+            ChoseHour: function (lst) {
+                let self = this;
+                self.objKhuyenMai.arrGioApDung = lst;
+            },
             ChoseChiNhanh: function (lst) {
                 let self = this;
                 self.objKhuyenMai.arrChiNhanhApDung = lst;
+                if (lst.length > 0 && lst[0].ID !== null) {
+                    self.objKhuyenMai.TatCaDonVi = false;
+                }
             },
             ChoseNhanVien: function (lst) {
                 let self = this;
                 self.objKhuyenMai.arrNhanVienApDung = lst;
+                if (lst.length > 0 && lst[0].ID !== null) {
+                    self.objKhuyenMai.TatCaNhanVien = false;
+                }
             },
             ChoseNhomKhach: function (lst) {
                 let self = this;
                 self.objKhuyenMai.arrNhomKhachApDung = lst;
+                if (lst.length > 0 && lst[0].ID !== null) {
+                    self.objKhuyenMai.TatCaDoiTuong = false;
+                }
             },
             RemoveChiTietKM: function (ctkm, index) {
                 let self = this;
@@ -1207,7 +1346,7 @@
                     if (i === index) {
                         for (var j = 0; j < self.chitietKM[i].details.length; j++) {
                             if (j === indexCT) {
-                                self.chitietKM[i].details[j].GiamGiaTheoPhanTram = !self.chitietKM[i].details[j].GiamGiaTheoPhanTram;;
+                                self.chitietKM[i].details[j].GiamGiaTheoPhanTram = !self.chitietKM[i].details[j].GiamGiaTheoPhanTram;
                             }
                         }
                         break;
@@ -1236,7 +1375,7 @@
                 for (let i = 0; i < self.chitietKM.length; i++) {
                     if (i === index) {
                         if (self.chitietKM[i].GiamGiaTheoPhanTram) {
-                            if (val > 100) {
+                            if (formatNumberToFloat(val) > 100) {
                                 val = 100;
                             }
                             self.chitietKM[i].GiamGia = val;
@@ -1316,7 +1455,7 @@
                     if (i === index) {
                         for (let j = 0; j < self.chitietKM[i].details.length; j++) {
                             if (j === indexCT) {
-                                self.chitietKM[i].details.splice(j, 1);;
+                                self.chitietKM[i].details.splice(j, 1);
                             }
                         }
                         break;
@@ -1417,7 +1556,6 @@
                 if (self.objKhuyenMai.LoaiKhuyenMai === commonStatisJs.LoaiKhuyenMai.HOA_DON) {
                     for (let i = 0; i < self.chitietKM.length; i++) {
                         let forOut = self.chitietKM[i];
-
                         let tongTienHang = formatNumberToFloat(forOut.TongTienHang);
 
                         if (tongTienHang == 0) {
@@ -1437,9 +1575,9 @@
                                 break;
                             case commonStatisJs.HinhThucKhuyenMai.HD_TANG_HANG:
                                 {
-                                    let slTang = formatNumberToFloat(forOut.SoLuongTang);
+                                    let slTang = formatNumberToFloat(forOut.SoLuong);
                                     let idQuyDoiTang = forOut.ID_DonViQuiDoi;
-                                    let idNhomHang = forOut.ID_NhomHangHoa;;
+                                    let idNhomHang = forOut.ID_NhomHangHoa;
                                     if (slTang == 0) {
                                         ShowMessage_Danger("Vui lòng nhập số lượng hàng được tặng");
                                         return false;
@@ -1457,7 +1595,7 @@
                                         ShowMessage_Danger("Vui lòng nhập giá trị Giảm giá");
                                         return false;
                                     }
-                                    let slTang = formatNumberToFloat(forOut.SoLuongTang);
+                                    let slTang = formatNumberToFloat(forOut.SoLuong);
                                     let idQuyDoi = forOut.ID_DonViQuiDoi;
                                     let idNhomHang = forOut.ID_NhomHangHoa;
                                     if (slTang == 0) {
@@ -1488,7 +1626,7 @@
 
                         let idQuyDoiMua = formatNumberToFloat(forOut.ID_DonViQuiDoiMua);
                         let idNhomHangMua = formatNumberToFloat(forOut.ID_NhomHangHoaMua);
-                        let soLuongMua = formatNumberToFloat(forOut.ID_NhomHangHoaMua);
+                        let soLuongMua = formatNumberToFloat(forOut.SoLuongMua);
 
                         if (commonStatisJs.CheckNull(idQuyDoiMua) && commonStatisJs.CheckNull(idNhomHangMua)) {
                             ShowMessage_Danger("Vui lòng chọn hàng/nhóm hàng mua");
@@ -1504,7 +1642,7 @@
                             case commonStatisJs.HinhThucKhuyenMai.HH_GIAM_GIA_HANG:
                                 {
                                     let giamGia = formatNumberToFloat(forOut.GiamGia);
-                                    let slTang = formatNumberToFloat(forOut.SoLuongTang);
+                                    let slTang = formatNumberToFloat(forOut.SoLuong);
                                     let idQuyDoi = forOut.ID_DonViQuiDoi;
                                     let idNhomHang = forOut.ID_NhomHangHoa;
                                     if (giamGia == 0) {
@@ -1523,9 +1661,9 @@
                                 break;
                             case commonStatisJs.HinhThucKhuyenMai.HH_TANG_HANG:
                                 {
-                                    let slTang = formatNumberToFloat(forOut.SoLuongTang);
+                                    let slTang = formatNumberToFloat(forOut.SoLuong);
                                     let idQuyDoiTang = forOut.ID_DonViQuiDoi;
-                                    let idNhomHang = forOut.ID_NhomHangHoa;;
+                                    let idNhomHang = forOut.ID_NhomHangHoa;
                                     if (slTang == 0) {
                                         ShowMessage_Danger("Vui lòng nhập số lượng hàng được tặng");
                                         return false;
@@ -1543,7 +1681,7 @@
                                         ShowMessage_Danger("Vui lòng nhập giá trị Giảm giá");
                                         return false;
                                     }
-                                    let slTang = formatNumberToFloat(forOut.SoLuongTang);
+                                    let slTang = formatNumberToFloat(forOut.SoLuong);
                                     let idQuyDoi = forOut.ID_DonViQuiDoi;
                                     let idNhomHang = forOut.ID_NhomHangHoa;
                                     if (slTang == 0) {
@@ -1569,16 +1707,16 @@
                     }
                 }
 
-                console.log(333, self.objKhuyenMai.ID, self.objKhuyenMai.MaKhuyenMai)
-                //let checkExists = await ajaxHelper(self.BH_KhuyenMaiAPI, 'CheckExists_MaKhuyenMai?idKhuyenMai=' + self.objKhuyenMai.ID
-                //    + '&maKhuyenMai=' + self.objKhuyenMai.MaKhuyenMai, 'GET').done().then(function (data) {
-                //        return data;
-                //    });
-                //if (checkExists) {
-                //    ShowMessage_Danger("Mã khuyến mại đã tồn tại");
-                //    return false;
-                //}
-
+                if (!commonStatisJs.CheckNull(self.objKhuyenMai.MaKhuyenMai)) {
+                    let checkExists = await ajaxHelper(self.BH_KhuyenMaiAPI, 'CheckExists_MaKhuyenMai?idKhuyenMai=' + self.objKhuyenMai.ID
+                        + '&maKhuyenMai=' + self.objKhuyenMai.MaKhuyenMai, 'GET').done().then(function (data) {
+                            return data;
+                        });
+                    if (checkExists) {
+                        ShowMessage_Danger("Mã khuyến mại đã tồn tại");
+                        return false;
+                    }
+                }
                 return true;
             },
             SaveData: async function () {
@@ -1595,10 +1733,18 @@
                 let myData = {
                     objKhuyenMai: self.objKhuyenMai
                 }
-                myData.objKhuyenMai.ThangApDung = self.objKhuyenMai.arrThangApDung.toString(',');
-                myData.objKhuyenMai.NgayApDung = self.objKhuyenMai.arrNgayApDung.toString(',');
-                myData.objKhuyenMai.ThuApDung = self.objKhuyenMai.arrThuApDung.toString(',');
-                myData.objKhuyenMai.GioApDung = self.objKhuyenMai.arrGioApDung.toString(',');
+                myData.objKhuyenMai.ThangApDung = self.objKhuyenMai.arrThangApDung.map(function (x) {
+                    return x.ID;
+                }).toString(",");
+                myData.objKhuyenMai.NgayApDung = self.objKhuyenMai.arrNgayApDung.map(function (x) {
+                    return x.ID;
+                }).toString(",");
+                myData.objKhuyenMai.ThuApDung = self.objKhuyenMai.arrThuApDung.map(function (x) {
+                    return x.ID;
+                }).toString(",");
+                myData.objKhuyenMai.GioApDung = self.objKhuyenMai.arrGioApDung.map(function (x) {
+                    return x.ID;
+                }).toString(",");
 
                 let ctKM = self.chitietKM;
                 if (self.objKhuyenMai.LoaiKhuyenMai === commonStatisJs.LoaiKhuyenMai.HOA_DON) {
@@ -1610,15 +1756,15 @@
                 ctKM.map((x, index) => {
                     x.STT = index + 1
                 });
-                console.log('ctkm01 ', ctKM)
-                console.log('objKM ', myData.objKhuyenMai)
                 self.isSaving = false;
-                let dataKM = ajaxHelper(self.BH_KhuyenMaiAPI + 'PostDM_KhuyenMai', 'POST', myData).done()
+                let dataKM = await ajaxHelper(self.BH_KhuyenMaiAPI + 'PostDM_KhuyenMai', 'POST', myData).done()
                     .then(function (data) {
                         return data;
                     });
+
                 if (dataKM.res) {
-                    if (objKhuyenMai.HinhThuc = commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG) {
+                    let idKhuyenMai = dataKM.dataSoure.ID;
+                    if (self.objKhuyenMai.HinhThuc = commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG) {
 
                     }
                     else {
@@ -1626,12 +1772,102 @@
                             x.STT = index + 1
                         });
                     }
-                    console.log('ctkm ', ctKM)
 
-                    let dataCTKM = ajaxHelper(self.BH_KhuyenMaiAPI + 'PostDM_KhuyenMaiChiTiet', 'POST', { lstChiTietKM: ctKM }).done()
+                    let dataCTKM = await ajaxHelper(self.BH_KhuyenMaiAPI + 'PostDM_KhuyenMaiChiTiet?idKhuyenMai=' + idKhuyenMai, 'POST', { lstChiTietKM: ctKM }).done()
                         .then(function (data) {
                             return data;
                         });
+                    if (dataCTKM.res) {
+                        ShowMessage_Success('Thêm mới chương trình khuyến mại thành công');
+                    }
+
+                    if (self.objKhuyenMai.arrChiNhanhApDung.length > 0 || self.objKhuyenMai.arrNhanVienApDung.length > 0 ||
+                        self.objKhuyenMai.arrNhanVienApDung.length > 0) {
+                        let arrChiNhanh = self.objKhuyenMai.arrChiNhanhApDung.map(function (x) {
+                            return x.ID;
+                        });
+                        let arrNhanVien = self.objKhuyenMai.arrNhanVienApDung.map(function (x) {
+                            return x.ID;
+                        })
+                        let arrNhomKhach = self.objKhuyenMai.arrNhomKhachApDung.map(function (x) {
+                            return x.ID;
+                        })
+                        let arrKMAD = [];
+                        let objAD = { ID_DonVi: null, ID_NhanVien: null, ID_NhomKhachHang: null };
+
+                        if (arrChiNhanh.length > 0) {
+                            if (arrNhanVien.length > 0) {
+                                if (arrNhomKhach.length > 0) {
+                                    // full
+                                    for (let i = 0; i < arrChiNhanh.length; i++) {
+                                        for (let k = 0; k < arrNhanVien.length; k++) {
+                                            for (let j = 0; j < arrNhomKhach.length; j++) {
+                                                arrKMAD.push({ ID_DonVi: arrChiNhanh[i], ID_NhanVien: arrNhanVien[k], ID_NhomKhachHang: arrNhomKhach[j] })
+                                            }
+                                        }
+                                    }
+
+                                }
+                                else {
+                                    // chinhanh + nvien
+                                    for (let i = 0; i < arrChiNhanh.length; i++) {
+                                        for (let k = 0; k < arrNhanVien.length; k++) {
+                                            arrKMAD.push({ ID_DonVi: arrChiNhanh[i], ID_NhanVien: arrNhanVien[k], ID_NhomKhachHang: null })
+                                        }
+                                    }
+                                }
+                            }
+                            else {
+                                // chinhanh + nhomkhach
+                                if (arrNhomKhach.length > 0) {
+                                    for (let i = 0; i < arrChiNhanh.length; i++) {
+                                        for (let k = 0; k < arrNhomKhach.length; k++) {
+                                            arrKMAD.push({ ID_DonVi: arrChiNhanh[i], ID_NhanVien: null, ID_NhomKhachHang: arrNhomKhach[k] })
+                                        }
+                                    }
+                                }
+                                else {
+                                    // chinhanh
+                                    for (let i = 0; i < arrChiNhanh.length; i++) {
+                                        arrKMAD.push({ ID_DonVi: arrChiNhanh[i], ID_NhanVien: null, ID_NhomKhachHang: null })
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            if (arrNhanVien.length > 0) {
+                                if (arrNhomKhach.length > 0) {
+                                    // nvien + nhomkhach
+                                    for (let k = 0; k < arrNhanVien.length; k++) {
+                                        for (let j = 0; j < arrNhomKhach.length; j++) {
+                                            arrKMAD.push({ ID_DonVi: null, ID_NhanVien: arrNhanVien[k], ID_NhomKhachHang: arrNhomKhach[j] })
+                                        }
+                                    }
+                                }
+                                else {
+                                    // nhanvien
+                                    for (let k = 0; k < arrNhanVien.length; k++) {
+                                        arrKMAD.push({ ID_DonVi: null, ID_NhanVien: arrNhanVien[k], ID_NhomKhachHang: null })
+                                    }
+                                }
+                            }
+                            else {
+                                if (arrNhomKhach.length > 0) {
+                                    // nhomkhach
+                                    for (let j = 0; j < arrNhomKhach.length; j++) {
+                                        arrKMAD.push({ ID_DonVi: null, ID_NhanVien: null, ID_NhomKhachHang: arrNhomKhach[j] })
+                                    }
+                                }
+
+                            }
+                        }
+
+                        let dataKMAD = await ajaxHelper(self.BH_KhuyenMaiAPI + 'PostDM_KhuyenMaiApDung?idKhuyenMai=' + idKhuyenMai, 'POST', { objKhuyenMaiApDung: arrKMAD }).done()
+                            .then(function (data) {
+                                return data;
+                            });
+                        self.saveOK = true;
+                    }
                 }
                 $('#vmThemMoiKhuyenMai').modal('hide');
             }

@@ -695,116 +695,45 @@ namespace libQuy_HoaDon
             }
         }
         //get list Đơn Vị khuyến mại
-        public List<DM_DonVi> getLisDonViKM(Guid ID_KhuyenMai)
+        public List<Object> getLisDonViKM(Guid ID_KhuyenMai)
         {
-
-            var tb = from kmap in db.DM_KhuyenMai_ApDung
-                     join dv in db.DM_DonVi on kmap.ID_DonVi equals dv.ID
-                     where kmap.ID_KhuyenMai == ID_KhuyenMai
-                     group kmap by new
-                     {
-                         ID = dv.ID,
-                         TenDonVi = dv.TenDonVi,
-                         DiaChi = dv.DiaChi,
-                         SoDienThoai = dv.SoDienThoai
-                     } into g
-                     select new
-                     {
-                         ID = g.Key.ID,
-                         TenDonVi = g.Key.TenDonVi,
-                         DiaChi = g.Key.DiaChi,
-                         SoDienThoai = g.Key.SoDienThoai
-                     };
-            List<DM_DonVi> lst = new List<DM_DonVi>();
-            foreach (var item in tb)
-            {
-                DM_DonVi DM = new DM_DonVi();
-                DM.ID = item.ID;
-                DM.TenDonVi = item.TenDonVi;
-                DM.DiaChi = item.DiaChi;
-                DM.SoDienThoai = item.SoDienThoai;
-                lst.Add(DM);
-            }
-            if (lst != null)
-            {
-                return lst;
-            }
-            else
-            {
-                return null;
-            }
+            var tb = (from kmap in db.DM_KhuyenMai_ApDung
+                      join nv in db.DM_DonVi on kmap.ID_NhanVien equals nv.ID
+                      where kmap.ID_KhuyenMai == ID_KhuyenMai
+                      select new
+                      {
+                          nv.ID,
+                          nv.TenDonVi,
+                      }).ToList<Object>();
+            return tb;
         }
         public List<DM_NhanVienKM> getlistNhanViemKM(Guid ID_KhuyenMai)
         {
 
-            var tb = from kmap in db.DM_KhuyenMai_ApDung
-                     join nv in db.NS_NhanVien on kmap.ID_NhanVien equals nv.ID
-                     where kmap.ID_KhuyenMai == ID_KhuyenMai
-                     group kmap by new
-                     {
-                         ID = nv.ID,
-                         ID_KhuyenMai = kmap.ID_KhuyenMai,
-                         TenNhanVien = nv.TenNhanVien
-                     } into g
-                     select new
-                     {
-                         ID = g.Key.ID,
-                         ID_KhuyenMai = g.Key.ID_KhuyenMai,
-                         TenNhanVien = g.Key.TenNhanVien
-                     };
-            List<DM_NhanVienKM> lst = new List<DM_NhanVienKM>();
-            foreach (var item in tb)
-            {
-                DM_NhanVienKM DM = new DM_NhanVienKM();
-                DM.ID = item.ID;
-                DM.TenNhanVien = item.TenNhanVien;
-                DM.ID_KhuyenMai = item.ID_KhuyenMai;
-                lst.Add(DM);
-            }
-            if (lst != null)
-            {
-                return lst;
-            }
-            else
-            {
-                return null;
-            }
+            var tb = (from kmap in db.DM_KhuyenMai_ApDung
+                      join nv in db.NS_NhanVien on kmap.ID_NhanVien equals nv.ID
+                      where kmap.ID_KhuyenMai == ID_KhuyenMai
+                      select new DM_NhanVienKM
+                      {
+                          ID = nv.ID,
+                          ID_KhuyenMai = kmap.ID_KhuyenMai,
+                          MaNhanVien = nv.MaNhanVien,
+                          TenNhanVien = nv.TenNhanVien,
+                      }).ToList();
+            return tb;
         }
         public List<DM_NhomKhachHangKM> getlistNhomHangKM(Guid ID_KhuyenMai)
         {
-
-            var tb = from kmap in db.DM_KhuyenMai_ApDung
-                     join nh in db.DM_NhomDoiTuong on kmap.ID_NhomKhachHang equals nh.ID
-                     where kmap.ID_KhuyenMai == ID_KhuyenMai
-                     group kmap by new
-                     {
-                         ID = nh.ID,
-                         ID_KhuyenMai = kmap.ID_KhuyenMai,
-                         TenNhomDoiTuong = nh.TenNhomDoiTuong
-                     } into g
-                     select new
-                     {
-                         ID = g.Key.ID,
-                         ID_KhuyenMai = g.Key.ID_KhuyenMai,
-                         TenNhomDoiTuong = g.Key.TenNhomDoiTuong
-                     };
-            List<DM_NhomKhachHangKM> lst = new List<DM_NhomKhachHangKM>();
-            foreach (var item in tb)
-            {
-                DM_NhomKhachHangKM DM = new DM_NhomKhachHangKM();
-                DM.ID = item.ID;
-                DM.TenNhomDoiTuong = item.TenNhomDoiTuong;
-                DM.ID_KhuyenMai = item.ID_KhuyenMai;
-                lst.Add(DM);
-            }
-            if (lst != null)
-            {
-                return lst;
-            }
-            else
-            {
-                return null;
-            }
+            var tb = (from kmap in db.DM_KhuyenMai_ApDung
+                      join nv in db.DM_NhomDoiTuong on kmap.ID_NhanVien equals nv.ID
+                      where kmap.ID_KhuyenMai == ID_KhuyenMai
+                      select new DM_NhomKhachHangKM
+                      {
+                          ID = nv.ID,
+                          ID_KhuyenMai = kmap.ID_KhuyenMai,
+                          TenNhomDoiTuong = nv.TenNhomDoiTuong,
+                      }).ToList();
+            return tb;
         }
         public IQueryable<DM_KhuyenMai_ChiTiet> GetsCTKM(Expression<Func<DM_KhuyenMai_ChiTiet, bool>> query)
         {
@@ -1078,6 +1007,7 @@ namespace libQuy_HoaDon
         {
             public Guid ID { get; set; }
             public Guid ID_KhuyenMai { get; set; }
+            public string MaNhanVien { get; set; }
             public string TenNhanVien { get; set; }
         }
         public class DM_NhomKhachHangKM

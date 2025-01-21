@@ -1,16 +1,4 @@
-﻿
-var vmKhuyenMai = new Vue({
-    created: function () {
-
-    },
-    data: {
-
-    },
-    methods: {
-
-    }
-})
-var ViewModel = function () {
+﻿var ViewModel = function () {
     var self = this;
     var trangthai1;
     var trangthai2;
@@ -2847,9 +2835,10 @@ var ViewModel = function () {
         self.UpdateKhuyenMaiChiTiet(item);
     }
     self.UpdateKhuyenMai = function (item) {
-        _dieukienSave = 2;
-        self.TieuDe('Cập nhật chương trình khuyến mại');
-        self.UpdateKhuyenMaiChiTiet(item);
+        //_dieukienSave = 2;
+        //self.TieuDe('Cập nhật chương trình khuyến mại');
+        //self.UpdateKhuyenMaiChiTiet(item);
+        vmThemMoiKhuyenMai.showModalUpdate(item.ID);
     }
 
     function setValueSelect_KM24() {
@@ -4102,6 +4091,12 @@ var ViewModel = function () {
 //ko.applyBindings(new ViewModel());
 var vmKhuyenMai = new ViewModel();
 ko.applyBindings(vmKhuyenMai);
+
+   $('#vmThemMoiKhuyenMai').on('hidden.bs.modal', function () {
+        if (vmThemMoiKhuyenMai.saveOK) {
+            GetListPromotion();
+        }
+    })
 
 //var vmXuatHuy = new ViewModel();
 //ko.applyBindings(vmXuatHuy);

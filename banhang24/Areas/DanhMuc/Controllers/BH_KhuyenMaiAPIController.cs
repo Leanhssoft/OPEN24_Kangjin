@@ -186,400 +186,7 @@ namespace banhang24.Areas.DanhMuc.Controllers
                 }
             }
         }
-        [HttpPost, ActionName("PostBH_KhuyenMai")]
-        [ResponseType(typeof(DM_KhuyenMai))]
-        public IHttpActionResult PostBH_KhuyenMai([FromBody] JObject data, string dateStart, string dateEnd, Guid ID_DonVi, Guid ID_NhanVien)
-        {
-            using (SsoftvnContext db = SystemDBContext.GetDBContext())
-            {
-                ClassBH_HoaDon classHoaDon = new ClassBH_HoaDon(db);
-                ClassKhuyenMai classKhuyenMai = new ClassKhuyenMai(db);
 
-                DM_KhuyenMai objKhuyenMai = data["objKhuyenMai"].ToObject<DM_KhuyenMai>();
-                bool a = classKhuyenMai.Check_MaKhuyenMai(objKhuyenMai.MaKhuyenMai);
-                if (a == true)
-                {
-                    return ResponseMessage(Request.CreateResponse(HttpStatusCode.InternalServerError, "Mã chương trình khuyến mại đã tồn tại trên hệ thống"));
-                }
-                else
-                {
-                    string chitiet_km = string.Empty;
-                    string noidung_km = string.Empty;
-                    List<DM_KhuyenMai_ApDung> objKhuyenMaiApDung = data["objKhuyenMaiApDung"].ToObject<List<DM_KhuyenMai_ApDung>>();
-                    List<DM_KhuyenMai_ChiTiet> objKhuyenMaiChiTiet = data["objKhuyenMaiChiTiet"].ToObject<List<DM_KhuyenMai_ChiTiet>>();
-                    #region DM_KhuyenMai
-                    DM_KhuyenMai itemDM_KhuyenMai = new DM_KhuyenMai { };
-                    itemDM_KhuyenMai.ID = Guid.NewGuid();
-                    string MaKhuyenMai = string.Empty;
-                    if (objKhuyenMai.MaKhuyenMai == null || objKhuyenMai.MaKhuyenMai.Trim() == "" || objKhuyenMai.MaKhuyenMai == "null")
-                    {
-                        MaKhuyenMai = classKhuyenMai.GetAutoCode();
-                    }
-                    else
-                    {
-                        MaKhuyenMai = objKhuyenMai.MaKhuyenMai;
-                    }
-                    itemDM_KhuyenMai.MaKhuyenMai = MaKhuyenMai;
-
-                    //set thời gian tạo phiếu
-                    var ngaybd1 = dateStart.Replace("AM", "SA");
-                    var ngaybd = ngaybd1.Replace("PM", "CH");
-                    var ngaykt1 = dateEnd.Replace("AM", "SA");
-                    var ngaykt = ngaykt1.Replace("PM", "CH");
-                    itemDM_KhuyenMai.TenKhuyenMai = objKhuyenMai.TenKhuyenMai;
-                    itemDM_KhuyenMai.GhiChu = objKhuyenMai.GhiChu;
-                    itemDM_KhuyenMai.TrangThai = objKhuyenMai.TrangThai;
-                    itemDM_KhuyenMai.HinhThuc = objKhuyenMai.HinhThuc;
-                    itemDM_KhuyenMai.LoaiKhuyenMai = objKhuyenMai.LoaiKhuyenMai;
-                    itemDM_KhuyenMai.ThoiGianBatDau = DateTime.Parse(ngaybd);
-                    itemDM_KhuyenMai.ThoiGianKetThuc = DateTime.Parse(ngaykt);
-                    itemDM_KhuyenMai.NgayApDung = objKhuyenMai.NgayApDung;
-                    itemDM_KhuyenMai.ThangApDung = objKhuyenMai.ThangApDung;
-                    itemDM_KhuyenMai.ThuApDung = objKhuyenMai.ThuApDung;
-                    itemDM_KhuyenMai.GioApDung = objKhuyenMai.GioApDung;
-                    itemDM_KhuyenMai.ApDungNgaySinhNhat = objKhuyenMai.ApDungNgaySinhNhat;
-                    itemDM_KhuyenMai.TatCaDonVi = objKhuyenMai.TatCaDonVi;
-                    itemDM_KhuyenMai.TatCaDoiTuong = objKhuyenMai.TatCaDoiTuong;
-                    itemDM_KhuyenMai.TatCaNhanVien = objKhuyenMai.TatCaNhanVien;
-                    itemDM_KhuyenMai.NguoiTao = objKhuyenMai.NguoiTao;
-                    itemDM_KhuyenMai.NgayTao = DateTime.Now;
-                    string trangthaiKM = objKhuyenMai.TrangThai == true ? "Kích hoạt, Khuyến mại theo: " : "Chưa áp dụng, Khuyến mại theo: ";
-                    string loaiKM = objKhuyenMai.LoaiKhuyenMai == 1 ? "Hóa đơn, Hình thức: " : "Hàng hóa, Hình thức: ";
-                    string hinhthucKM = string.Empty;
-                    if (objKhuyenMai.HinhThuc == 11)
-                        hinhthucKM = "Giảm giá hóa đơn";
-                    else if (objKhuyenMai.HinhThuc == 12)
-                        hinhthucKM = "Tặng hàng";
-                    else if (objKhuyenMai.HinhThuc == 13)
-                        hinhthucKM = "Giảm giá hàng";
-                    else if (objKhuyenMai.HinhThuc == 14)
-                        hinhthucKM = "Tặng điểm";
-                    else if (objKhuyenMai.HinhThuc == 21)
-                        hinhthucKM = "Mua hàng giảm giá hàng";
-                    else if (objKhuyenMai.HinhThuc == 22)
-                        hinhthucKM = "Mua hàng tặng hàng";
-                    else if (objKhuyenMai.HinhThuc == 23)
-                        hinhthucKM = "Mua hàng tặng điểm";
-                    else if (objKhuyenMai.HinhThuc == 24)
-                        hinhthucKM = "Giảm giá bán theo số lượng mua";
-                    noidung_km = " Tên: " + objKhuyenMai.TenKhuyenMai + ", Tình trạng: " + trangthaiKM + loaiKM + hinhthucKM + " - Điều kiện: ";
-                    chitiet_km = " Tên: " + objKhuyenMai.TenKhuyenMai + ", Tình trạng: " + trangthaiKM + loaiKM + hinhthucKM + " <br><br> - Điều kiện: ";
-                    string thoigiamKM = "Hiệu lực từ ngày: " + itemDM_KhuyenMai.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") + " đến " + itemDM_KhuyenMai.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm");
-                    string thangKM = objKhuyenMai.ThangApDung != "" ? "Theo tháng: tháng " + objKhuyenMai.ThangApDung.Replace("_", ", tháng ") : string.Empty;
-                    string ngayKM = objKhuyenMai.NgayApDung != "" ? "Theo ngày: ngày " + objKhuyenMai.NgayApDung.Replace("_", ", ngày ") : string.Empty;
-                    string thuKM = objKhuyenMai.ThuApDung != "" ? "Theo thứ: thứ " + objKhuyenMai.ThuApDung.Replace("_", ", thứ ") : string.Empty;
-                    thuKM = thuKM.Replace("thứ 8", "chủ nhật");
-                    string sinhnhatKM = objKhuyenMai.ApDungNgaySinhNhat == 1 ? "Áp dụng vào ngày sinh nhật khách hàng" : objKhuyenMai.ApDungNgaySinhNhat == 2 ? "Áp dụng vào tuần sinh nhật khách hàng" : objKhuyenMai.ApDungNgaySinhNhat == 3 ? "Áp dụng vào tháng sinh nhật khách hàng" : string.Empty;
-                    string GioKM = objKhuyenMai.GioApDung != "" ? "Theo giờ: " + objKhuyenMai.GioApDung.Replace("_", ", ") : string.Empty;
-                    #endregion
-                    string strIns = classKhuyenMai.Add_KhuyenMai(itemDM_KhuyenMai);
-                    if (strIns != null && strIns != string.Empty)
-                        return ResponseMessage(Request.CreateResponse(HttpStatusCode.InternalServerError, strIns));
-                    else
-                    {
-                        #region DM_KhuyenMai_ChiTiet
-                        int i = 1;
-                        foreach (var item in objKhuyenMaiChiTiet)
-                        {
-                            DM_KhuyenMai_ChiTiet KM_ChiTiet = new DM_KhuyenMai_ChiTiet
-                            {
-                                ID = Guid.NewGuid(),
-                                ID_KhuyenMai = itemDM_KhuyenMai.ID,
-                                TongTienHang = item.TongTienHang,
-                                GiamGia = item.GiamGia,
-                                GiamGiaTheoPhanTram = item.GiamGiaTheoPhanTram,
-                                ID_DonViQuiDoi = item.ID_DonViQuiDoi,
-                                ID_NhomHangHoa = item.ID_NhomHangHoa,
-                                SoLuong = item.SoLuong,
-                                ID_DonViQuiDoiMua = item.ID_DonViQuiDoiMua,
-                                ID_NhomHangHoaMua = item.ID_NhomHangHoaMua,
-                                SoLuongMua = item.SoLuongMua,
-                                GiaKhuyenMai = item.GiaKhuyenMai,
-                                STT = i
-                            };
-                            if (objKhuyenMai.HinhThuc == 11)
-                            {
-                                string pt = item.GiamGiaTheoPhanTram == true ? " %" : " VNĐ";
-                                noidung_km = noidung_km + "Tổng tiền hàng từ " + string.Format("{0:#,##0.##}", item.TongTienHang).Replace(".", ",") + " Giảm giá " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt;
-                                chitiet_km = chitiet_km + "<br>Tổng tiền hàng từ " + string.Format("{0:#,##0.##}", item.TongTienHang).Replace(".", ",") + " Giảm giá " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt;
-                            }
-                            else if (objKhuyenMai.HinhThuc == 12)
-                            {
-                                string nameHH = string.Empty;
-                                string nameHH_load = string.Empty;
-                                DonViQuiDoi DQ = classHoaDon.getList_DonViQuyDoibyID(item.ID_DonViQuiDoi);
-                                if (DQ != null)
-                                {
-                                    nameHH = DQ.MaHangHoa;
-                                    nameHH_load = "<a style= \"cursor: pointer\" onclick = \"loadHangHoabyMaHH('" + DQ.MaHangHoa + "')\" >" + DQ.MaHangHoa + "</a>";
-                                }
-                                else
-                                {
-                                    DM_NhomHangHoa NH = classHoaDon.getList_NhomHangHoabyID(item.ID_NhomHangHoa);
-                                    nameHH = NH.TenNhomHangHoa;
-                                    nameHH_load = NH.TenNhomHangHoa;
-                                }
-                                noidung_km = noidung_km + "Tổng tiền hàng từ " + string.Format("{0:#,##0.##}", item.TongTienHang).Replace(".", ",") + " tặng " + string.Format("{0:#,##0.##}", item.SoLuong).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH;
-                                chitiet_km = chitiet_km + "<br>Tổng tiền hàng từ " + string.Format("{0:#,##0.##}", item.TongTienHang).Replace(".", ",") + " tặng " + string.Format("{0:#,##0.##}", item.SoLuong).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH_load;
-                            }
-                            else if (objKhuyenMai.HinhThuc == 13)
-                            {
-                                string nameHH = string.Empty;
-                                string nameHH_load = string.Empty;
-                                DonViQuiDoi DQ = classHoaDon.getList_DonViQuyDoibyID(item.ID_DonViQuiDoi);
-                                if (DQ != null)
-                                {
-                                    nameHH = DQ.MaHangHoa;
-                                    nameHH_load = "<a style= \"cursor: pointer\" onclick = \"loadHangHoabyMaHH('" + DQ.MaHangHoa + "')\" >" + DQ.MaHangHoa + "</a>";
-                                }
-                                else
-                                {
-                                    DM_NhomHangHoa NH = classHoaDon.getList_NhomHangHoabyID(item.ID_NhomHangHoa);
-                                    nameHH = NH.TenNhomHangHoa;
-                                    nameHH_load = NH.TenNhomHangHoa;
-                                }
-                                string pt = item.GiamGiaTheoPhanTram == true ? " %" : " VNĐ";
-                                noidung_km = noidung_km + "Tổng tiền hàng từ " + string.Format("{0:#,##0.##}", item.TongTienHang).Replace(".", ",") + " Giảm giá " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt + " cho " + string.Format("{0:#,##0.##}", item.SoLuong).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH;
-                                chitiet_km = chitiet_km + "<br>Tổng tiền hàng từ " + string.Format("{0:#,##0.##}", item.TongTienHang).Replace(".", ",") + " Giảm giá " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt + " cho " + string.Format("{0:#,##0.##}", item.SoLuong).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH_load;
-                            }
-                            else if (objKhuyenMai.HinhThuc == 14)
-                            {
-                                string pt = item.GiamGiaTheoPhanTram == true ? " %" : " điểm";
-                                noidung_km = noidung_km + "Tổng tiền hàng từ " + string.Format("{0:#,##0.##}", item.TongTienHang).Replace(".", ",") + " Điểm cộng " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt;
-                                chitiet_km = chitiet_km + "<br>Tổng tiền hàng từ " + string.Format("{0:#,##0.##}", item.TongTienHang).Replace(".", ",") + " Điểm cộng " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt;
-                            }
-                            else if (objKhuyenMai.HinhThuc == 21)
-                            {
-                                string nameHH = string.Empty;
-                                string nameHHT = string.Empty;
-                                string nameHH_LS = string.Empty;
-                                string nameHHT_LS = string.Empty;
-                                DonViQuiDoi DQ = classHoaDon.getList_DonViQuyDoibyID(item.ID_DonViQuiDoiMua);
-                                if (DQ != null)
-                                {
-                                    nameHH = DQ.MaHangHoa;
-                                    nameHH_LS = "<a style= \"cursor: pointer\" onclick = \"loadHangHoabyMaHH('" + DQ.MaHangHoa + "')\" >" + DQ.MaHangHoa + "</a>";
-                                }
-                                else
-                                {
-                                    DM_NhomHangHoa NH = classHoaDon.getList_NhomHangHoabyID(item.ID_NhomHangHoaMua);
-                                    nameHH = NH.TenNhomHangHoa;
-                                    nameHH_LS = NH.TenNhomHangHoa;
-                                }
-                                DonViQuiDoi DQT = classHoaDon.getList_DonViQuyDoibyID(item.ID_DonViQuiDoi);
-                                if (DQT != null)
-                                {
-                                    nameHHT = DQT.MaHangHoa;
-                                    nameHHT_LS = "<a style= \"cursor: pointer\" onclick = \"loadHangHoabyMaHH('" + DQT.MaHangHoa + "')\" >" + DQT.MaHangHoa + "</a>";
-                                }
-                                else
-                                {
-                                    DM_NhomHangHoa NHT = classHoaDon.getList_NhomHangHoabyID(item.ID_NhomHangHoa);
-                                    nameHHT = NHT.TenNhomHangHoa;
-                                    nameHHT_LS = NHT.TenNhomHangHoa;
-                                }
-                                string pt = item.GiamGiaTheoPhanTram == true ? " %" : " VNĐ";
-                                noidung_km = noidung_km + "Mua " + string.Format("{0:#,##0.##}", item.SoLuongMua).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH + " Giảm giá " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt + " cho " + string.Format("{0:#,##0.##}", item.SoLuong).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHHT;
-                                chitiet_km = chitiet_km + "<br>Mua " + string.Format("{0:#,##0.##}", item.SoLuongMua).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH_LS + " Giảm giá " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt + " cho " + string.Format("{0:#,##0.##}", item.SoLuong).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHHT_LS;
-                            }
-                            else if (objKhuyenMai.HinhThuc == 22)
-                            {
-                                string nameHH = string.Empty;
-                                string nameHHT = string.Empty;
-                                string nameHH_LS = string.Empty;
-                                string nameHHT_LS = string.Empty;
-                                DonViQuiDoi DQ = classHoaDon.getList_DonViQuyDoibyID(item.ID_DonViQuiDoiMua);
-                                if (DQ != null)
-                                {
-                                    nameHH = DQ.MaHangHoa;
-                                    nameHH_LS = "<a style= \"cursor: pointer\" onclick = \"loadHangHoabyMaHH('" + DQ.MaHangHoa + "')\" >" + DQ.MaHangHoa + "</a>";
-                                }
-                                else
-                                {
-                                    DM_NhomHangHoa NH = classHoaDon.getList_NhomHangHoabyID(item.ID_NhomHangHoaMua);
-                                    nameHH = NH.TenNhomHangHoa;
-                                    nameHH_LS = NH.TenNhomHangHoa;
-                                }
-                                DonViQuiDoi DQT = classHoaDon.getList_DonViQuyDoibyID(item.ID_DonViQuiDoi);
-                                if (DQT != null)
-                                {
-                                    nameHHT = DQT.MaHangHoa;
-                                    nameHHT_LS = "<a style= \"cursor: pointer\" onclick = \"loadHangHoabyMaHH('" + DQT.MaHangHoa + "')\" >" + DQT.MaHangHoa + "</a>";
-                                }
-                                else
-                                {
-                                    DM_NhomHangHoa NHT = classHoaDon.getList_NhomHangHoabyID(item.ID_NhomHangHoa);
-                                    nameHHT = NHT.TenNhomHangHoa;
-                                    nameHHT_LS = NHT.TenNhomHangHoa;
-                                }
-                                noidung_km = noidung_km + "Mua " + string.Format("{0:#,##0.##}", item.SoLuongMua).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH + " tặng " + string.Format("{0:#,##0.##}", item.SoLuong).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHHT;
-                                chitiet_km = chitiet_km + "<br>Mua " + string.Format("{0:#,##0.##}", item.SoLuongMua).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH_LS + " tặng " + string.Format("{0:#,##0.##}", item.SoLuong).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHHT_LS;
-                            }
-                            else if (objKhuyenMai.HinhThuc == 23)
-                            {
-                                string nameHH = string.Empty;
-                                string nameHH_LS = string.Empty;
-                                DonViQuiDoi DQ = classHoaDon.getList_DonViQuyDoibyID(item.ID_DonViQuiDoiMua);
-                                if (DQ != null)
-                                {
-                                    nameHH = DQ.MaHangHoa;
-                                    nameHH_LS = "<a style= \"cursor: pointer\" onclick = \"loadHangHoabyMaHH('" + DQ.MaHangHoa + "')\" >" + DQ.MaHangHoa + "</a>";
-                                }
-                                else
-                                {
-                                    DM_NhomHangHoa NH = classHoaDon.getList_NhomHangHoabyID(item.ID_NhomHangHoaMua);
-                                    nameHH = NH.TenNhomHangHoa;
-                                    nameHH_LS = NH.TenNhomHangHoa;
-                                }
-                                string pt = item.GiamGiaTheoPhanTram == true ? " %" : " điểm";
-                                noidung_km = noidung_km + "Mua " + string.Format("{0:#,##0.##}", item.SoLuongMua).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH + " Điểm cộng " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt;
-                                chitiet_km = chitiet_km + "<br>Mua " + string.Format("{0:#,##0.##}", item.SoLuongMua).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " " + nameHH_LS + " Điểm cộng " + string.Format("{0:#,##0.##}", item.GiamGia).Replace(",", "-").Replace(".", ",").Replace("-", ".") + pt;
-                            }
-                            else if (objKhuyenMai.HinhThuc == 24)
-                            {
-                                string nameHH = string.Empty;
-                                string nameHH_LS = string.Empty;
-                                DonViQuiDoi DQ = classHoaDon.getList_DonViQuyDoibyID(item.ID_DonViQuiDoiMua);
-                                if (DQ != null)
-                                {
-                                    nameHH = DQ.MaHangHoa;
-                                    nameHH_LS = "<a style= \"cursor: pointer\" onclick = \"loadHangHoabyMaHH('" + DQ.MaHangHoa + "')\" >" + DQ.MaHangHoa + "</a>";
-                                }
-                                else
-                                {
-                                    DM_NhomHangHoa NH = classHoaDon.getList_NhomHangHoabyID(item.ID_NhomHangHoaMua);
-                                    nameHH = NH.TenNhomHangHoa;
-                                    nameHH_LS = NH.TenNhomHangHoa;
-                                }
-                                noidung_km = noidung_km + "Khi mua " + nameHH + " số lượng từ " + string.Format("{0:#,##0.##}", item.SoLuongMua).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " giá " + string.Format("{0:#,##0.##}", item.GiaKhuyenMai).Replace(".", ",");
-                                chitiet_km = chitiet_km + "<br>Khi mua " + nameHH_LS + " số lượng từ " + string.Format("{0:#,##0.##}", item.SoLuongMua).Replace(",", "-").Replace(".", ",").Replace("-", ".") + " giá " + string.Format("{0:#,##0.##}", item.GiaKhuyenMai).Replace(".", ",");
-                            }
-                            strIns = classKhuyenMai.Add_KhuyenMaiChiTiet(KM_ChiTiet);
-                            i = i + 1;
-                        }
-                        noidung_km = noidung_km + ". Thời gian áp dụng:  " + thoigiamKM;
-                        chitiet_km = chitiet_km + "<br><br>- Thời gian áp dụng: <br>" + thoigiamKM;
-                        if (thangKM != string.Empty)
-                        {
-                            noidung_km = noidung_km + ". " + thangKM;
-                            chitiet_km = chitiet_km + "<br>" + thangKM;
-                        }
-                        if (ngayKM != string.Empty)
-                        {
-                            noidung_km = noidung_km + ". " + ngayKM;
-                            chitiet_km = chitiet_km + "<br>" + ngayKM;
-                        }
-                        if (thuKM != string.Empty)
-                        {
-                            noidung_km = noidung_km + ". " + thuKM;
-                            chitiet_km = chitiet_km + "<br>" + thuKM;
-                        }
-                        if (GioKM != string.Empty)
-                        {
-                            noidung_km = noidung_km + ". " + GioKM;
-                            chitiet_km = chitiet_km + "<br>" + GioKM;
-                        }
-                        if (sinhnhatKM != string.Empty)
-                        {
-                            noidung_km = noidung_km + ". " + sinhnhatKM;
-                            chitiet_km = chitiet_km + "<br>" + sinhnhatKM;
-                        }
-                        noidung_km = noidung_km + ". Phạm vi áp dụng: ";
-                        chitiet_km = chitiet_km + "<br><br>- Phạm vi áp dụng: ";
-                        #endregion
-                        #region DM_KhuyenMaiApDung
-                        string chinhanhKM = "Toàn hệ thống";
-                        string nguoibanKM = "Toàn bộ người bán";
-                        string khachhangKM = "Toàn bộ khách hàng";
-                        int k = 0;
-                        int l = 0;
-                        int m = 0;
-                        Guid? checkID_DonVi = null;
-                        Guid? checkID_NhanVien = null;
-                        Guid? checkID_NhomKhachHang = null;
-                        foreach (var item in objKhuyenMaiApDung)
-                        {
-                            DM_KhuyenMai_ApDung KM_Apdung = new DM_KhuyenMai_ApDung
-                            {
-                                ID = Guid.NewGuid(),
-                                ID_KhuyenMai = itemDM_KhuyenMai.ID,
-                                ID_DonVi = item.ID_DonVi,
-                                ID_NhanVien = item.ID_NhanVien,
-                                ID_NhomKhachHang = item.ID_NhomKhachHang,
-                            };
-                            if (item.ID_DonVi != null || item.ID_NhanVien != null || item.ID_NhomKhachHang != null)
-                            {
-                                strIns = classKhuyenMai.Add_KhuyenMaiApDung(KM_Apdung);
-                            }
-                        }
-                        foreach (var item in objKhuyenMaiApDung.OrderBy(x => x.ID_DonVi))
-                        {
-                            if (item.ID_DonVi != null)
-                            {
-                                DM_DonVi DV = classHoaDon.getList_DonVibyID(item.ID_DonVi);
-                                if (DV != null & checkID_DonVi != item.ID_DonVi)
-                                {
-                                    if (k == 0)
-                                        chinhanhKM = DV.TenDonVi;
-                                    else
-                                        chinhanhKM = chinhanhKM + ", " + DV.TenDonVi;
-                                    k = k + 1;
-                                    checkID_DonVi = item.ID_DonVi;
-                                }
-                            }
-                        }
-                        foreach (var item in objKhuyenMaiApDung.OrderBy(x => x.ID_NhanVien))
-                        {
-                            if (item.ID_NhanVien != null)
-                            {
-                                NS_NhanVien NV = classHoaDon.getList_NhanVienbyID(item.ID_NhanVien);
-                                if (NV != null & checkID_NhanVien != item.ID_NhanVien)
-                                {
-                                    if (l == 0)
-                                        nguoibanKM = NV.TenNhanVien;
-                                    else
-                                        nguoibanKM = nguoibanKM + ", " + NV.TenNhanVien;
-                                    l = l + 1;
-                                    checkID_NhanVien = item.ID_NhanVien;
-                                }
-                            }
-                        }
-                        foreach (var item in objKhuyenMaiApDung.OrderBy(x => x.ID_NhomKhachHang))
-                        {
-                            if (item.ID_NhomKhachHang != null)
-                            {
-                                DM_NhomDoiTuong DT = classHoaDon.getList_NhomKhachHangbyID(item.ID_NhomKhachHang);
-                                if (DT != null & checkID_NhomKhachHang != item.ID_NhomKhachHang)
-                                {
-                                    if (m == 0)
-                                        khachhangKM = DT.TenNhomDoiTuong;
-                                    else
-                                        khachhangKM = khachhangKM + ", " + DT.TenNhomDoiTuong;
-                                    m = m + 1;
-                                    checkID_NhomKhachHang = item.ID_NhomKhachHang;
-                                }
-                            }
-                        }
-                        noidung_km = noidung_km + "Chi nhánh: " + chinhanhKM + ". Người bán: " + nguoibanKM + ". Khách hàng: " + khachhangKM;
-                        chitiet_km = chitiet_km + "<br>Chi nhánh: " + chinhanhKM + "<br>Người bán: " + nguoibanKM + "<br>Khách hàng: " + khachhangKM;
-                        #endregion
-                        HT_NhatKySuDung hT_NhatKySuDung = new HT_NhatKySuDung
-                        {
-                            ID = Guid.NewGuid(),
-                            ID_NhanVien = ID_NhanVien,
-                            ID_DonVi = ID_DonVi,
-                            ChucNang = "Khuyến mại",
-                            ThoiGian = DateTime.Now,
-                            NoiDung = "Thêm mới chương trình khuyến mại: " + MaKhuyenMai + noidung_km,
-                            NoiDungChiTiet = "Thêm mới chương trình khuyến mại: <a style= \"cursor: pointer\" onclick = \"loadKhuyenMaibyMaKM('" + MaKhuyenMai + "')\" >" + MaKhuyenMai + "</a> <br>" + chitiet_km,
-                            LoaiNhatKy = 1
-                        };
-                        string strIns12 = SaveDiary.add_Diary(hT_NhatKySuDung);
-                        return Json(new { data = new { itemDM_KhuyenMai.ID } });
-                    }
-                }
-            }
-        }
         [HttpPost, ActionName("PostBH_ChotSo")]
         [ResponseType(typeof(ChotSo))]
         public IHttpActionResult PostBH_ChotSo([FromBody] JObject data)
@@ -1309,47 +916,16 @@ namespace banhang24.Areas.DanhMuc.Controllers
         {
             using (SsoftvnContext db = SystemDBContext.GetDBContext())
             {
-                ClassKhuyenMai classKhuyenMai = new ClassKhuyenMai(db);
-                List<DM_KhuyenMai_ChiTiet> lst = classKhuyenMai.GetsCTKM(ct => ct.ID_KhuyenMai == ID_KhuyenMai).Select(x => new
-                {
-                    ID = x.ID,
-                    ID_KhuyenMai = ID_KhuyenMai,
-                    TongTienHang = x.TongTienHang,
-                    GiamGia = x.GiamGia,
-                    GiamGiaTheoPhanTram = x.GiamGiaTheoPhanTram,
-                    ID_DonViQuiDoi = x.ID_DonViQuiDoi,
-                    ID_NhomHangHoa = x.ID_NhomHangHoa,
-                    SoLuong = x.SoLuong,
-                    ID_DonViQuiDoiMua = x.ID_DonViQuiDoiMua,
-                    ID_NhomHangHoaMua = x.ID_NhomHangHoaMua,
-                    SoLuongMua = x.SoLuongMua,
-                    GiaKhuyenMai = x.GiaKhuyenMai
-
-                }).AsEnumerable().Select(c => new DM_KhuyenMai_ChiTiet
-                {
-                    ID = c.ID,
-                    ID_KhuyenMai = ID_KhuyenMai,
-                    TongTienHang = c.TongTienHang,
-                    GiamGia = c.GiamGia,
-                    GiamGiaTheoPhanTram = c.GiamGiaTheoPhanTram,
-                    ID_DonViQuiDoi = c.ID_DonViQuiDoi,
-                    ID_NhomHangHoa = c.ID_NhomHangHoa,
-                    SoLuong = c.SoLuong,
-                    ID_DonViQuiDoiMua = c.ID_DonViQuiDoiMua,
-                    ID_NhomHangHoaMua = c.ID_NhomHangHoaMua,
-                    SoLuongMua = c.SoLuongMua,
-                    GiaKhuyenMai = c.GiaKhuyenMai
-
-                }).ToList();
+                var lst = db.DM_KhuyenMai_ChiTiet.Where(x => x.ID_KhuyenMai == ID_KhuyenMai).ToList();
                 return lst;
             }
         }
-        public List<DM_DonVi> getLisDonViKM(Guid ID_KhuyenMai)
+        public List<Object> getLisDonViKM(Guid ID_KhuyenMai)
         {
             using (SsoftvnContext db = SystemDBContext.GetDBContext())
             {
                 ClassKhuyenMai classKhuyenMai = new ClassKhuyenMai(db);
-                List<DM_DonVi> lst = classKhuyenMai.getLisDonViKM(ID_KhuyenMai);
+                List<Object> lst = classKhuyenMai.getLisDonViKM(ID_KhuyenMai);
                 return lst;
             }
         }
@@ -1369,6 +945,37 @@ namespace banhang24.Areas.DanhMuc.Controllers
                 ClassKhuyenMai classKhuyenMai = new ClassKhuyenMai(db);
                 List<DM_NhomKhachHangKM> lst = classKhuyenMai.getlistNhomHangKM(ID_KhuyenMai);
                 return lst;
+            }
+        }
+
+        public Object GetDMKhuyenMai_byId(Guid idKhuyenMai)
+        {
+            using (SsoftvnContext db = SystemDBContext.GetDBContext())
+            {
+                var xx = db.DM_KhuyenMai.Where(x => x.ID == idKhuyenMai).ToList();
+                if(xx.Count > 0)
+                {
+                    return xx.Select(x => new
+                    {
+                        x.ID,
+                        x.MaKhuyenMai,
+                        x.TenKhuyenMai,
+                        x.ThoiGianBatDau,
+                        x.ThoiGianKetThuc,
+                        x.LoaiKhuyenMai,
+                        x.HinhThuc,
+                        x.ThangApDung,
+                        x.NgayApDung,
+                        x.ThuApDung,
+                        x.GioApDung,
+                        x.GhiChu,
+                        x.TatCaDonVi,
+                        x.TatCaNhanVien,
+                        x.TatCaDoiTuong,
+                        x.TrangThai,
+                    }).FirstOrDefault();
+                }
+                return null;
             }
         }
 
