@@ -73,9 +73,7 @@ namespace libQuy_HoaDon
         {
             string format = "{0:0000}";
 
-            String maKM = string.Empty;
-            maKM = "KM";
-            // find in BH_HoaDon
+            var maKM = "KM";
             string madv = db.DM_KhuyenMai.Where(p => p.MaKhuyenMai.IndexOf(maKM) > -1).
                 Where(p => p.MaKhuyenMai.Length == 6 || p.MaKhuyenMai.Length == 7 || p.MaKhuyenMai.Length == 8 || p.MaKhuyenMai.Length == 9).OrderByDescending(p => p.MaKhuyenMai).
                 Select(p => p.MaKhuyenMai).FirstOrDefault();
@@ -697,9 +695,21 @@ namespace libQuy_HoaDon
         //get list Đơn Vị khuyến mại
         public List<Object> getLisDonViKM(Guid ID_KhuyenMai)
         {
-            var tb = (from kmap in db.DM_KhuyenMai_ApDung
-                      join nv in db.DM_DonVi on kmap.ID_NhanVien equals nv.ID
-                      where kmap.ID_KhuyenMai == ID_KhuyenMai
+            var chinhanhApDung = (from kmap in db.DM_KhuyenMai_ApDung
+                                   where kmap.ID_KhuyenMai == ID_KhuyenMai
+                                   group new
+                                   {
+                                       kmap.ID_DonVi,
+                                       kmap.ID_KhuyenMai
+                                   } by new { kmap.ID_DonVi, kmap.ID_KhuyenMai } into g
+                                   select new
+                                   {
+                                       g.Key.ID_KhuyenMai,
+                                       g.Key.ID_DonVi
+                                   }).ToList();
+
+            var tb = (from kmap in chinhanhApDung
+                      join nv in db.DM_DonVi on kmap.ID_DonVi equals nv.ID
                       select new
                       {
                           nv.ID,
@@ -709,14 +719,24 @@ namespace libQuy_HoaDon
         }
         public List<DM_NhanVienKM> getlistNhanViemKM(Guid ID_KhuyenMai)
         {
-
-            var tb = (from kmap in db.DM_KhuyenMai_ApDung
-                      join nv in db.NS_NhanVien on kmap.ID_NhanVien equals nv.ID
-                      where kmap.ID_KhuyenMai == ID_KhuyenMai
+            var nvApDung = (from kmap in db.DM_KhuyenMai_ApDung
+                            where kmap.ID_KhuyenMai == ID_KhuyenMai
+                            group new
+                            {
+                                kmap.ID_NhanVien,
+                                kmap.ID_KhuyenMai
+                            } by new { kmap.ID_NhanVien, kmap.ID_KhuyenMai } into g
+                            select new
+                            {
+                                g.Key.ID_KhuyenMai,
+                                g.Key.ID_NhanVien
+                            }).ToList();
+            var tb = (from nvAD in nvApDung
+                      join nv in db.NS_NhanVien on nvAD.ID_NhanVien equals nv.ID
                       select new DM_NhanVienKM
                       {
                           ID = nv.ID,
-                          ID_KhuyenMai = kmap.ID_KhuyenMai,
+                          ID_KhuyenMai = nvAD.ID_KhuyenMai,
                           MaNhanVien = nv.MaNhanVien,
                           TenNhanVien = nv.TenNhanVien,
                       }).ToList();
@@ -724,9 +744,21 @@ namespace libQuy_HoaDon
         }
         public List<DM_NhomKhachHangKM> getlistNhomHangKM(Guid ID_KhuyenMai)
         {
-            var tb = (from kmap in db.DM_KhuyenMai_ApDung
-                      join nv in db.DM_NhomDoiTuong on kmap.ID_NhanVien equals nv.ID
-                      where kmap.ID_KhuyenMai == ID_KhuyenMai
+            var nhomKhachApDung = (from kmap in db.DM_KhuyenMai_ApDung
+                            where kmap.ID_KhuyenMai == ID_KhuyenMai
+                            group new
+                            {
+                                kmap.ID_NhomKhachHang,
+                                kmap.ID_KhuyenMai
+                            } by new { kmap.ID_NhomKhachHang, kmap.ID_KhuyenMai } into g
+                            select new
+                            {
+                                g.Key.ID_KhuyenMai,
+                                g.Key.ID_NhomKhachHang
+                            }).ToList();
+
+            var tb = (from kmap in nhomKhachApDung
+                      join nv in db.DM_NhomDoiTuong on kmap.ID_NhomKhachHang equals nv.ID
                       select new DM_NhomKhachHangKM
                       {
                           ID = nv.ID,

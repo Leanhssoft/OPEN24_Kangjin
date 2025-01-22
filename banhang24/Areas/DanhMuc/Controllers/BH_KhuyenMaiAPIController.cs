@@ -55,6 +55,7 @@ namespace banhang24.Areas.DanhMuc.Controllers
                 }
             }
         }
+        [HttpPost]
         public IHttpActionResult PutDM_KhuyenMai([FromBody] JObject data)
         {
             using (SsoftvnContext db = SystemDBContext.GetDBContext())
@@ -65,7 +66,7 @@ namespace banhang24.Areas.DanhMuc.Controllers
                     if (data["objKhuyenMai"] != null)
                     {
                         DM_KhuyenMai obj = data["objKhuyenMai"].ToObject<DM_KhuyenMai>();
-                        var maKhuyenMai = obj.MaKhuyenMai;
+                        string maKhuyenMai = obj.MaKhuyenMai;
 
                         DM_KhuyenMai objUpdate = db.DM_KhuyenMai.Find(obj.ID);
                         if (objUpdate != null)
@@ -95,7 +96,7 @@ namespace banhang24.Areas.DanhMuc.Controllers
 
                             db.Entry(objUpdate).State = EntityState.Modified;
                             db.SaveChanges();
-                            return ActionTrueData(objUpdate);
+                            return ActionTrueData(obj);
                         }
                     }
                     return ActionFalseNotData("không có dữ liệu");
@@ -637,6 +638,7 @@ namespace banhang24.Areas.DanhMuc.Controllers
         }
         #endregion
         #region Select
+        [HttpGet]
         public bool CheckExists_MaKhuyenMai(Guid idKhuyenMai, string maKhuyenMai)
         {
             using (SsoftvnContext db = SystemDBContext.GetDBContext())
@@ -953,7 +955,7 @@ namespace banhang24.Areas.DanhMuc.Controllers
             using (SsoftvnContext db = SystemDBContext.GetDBContext())
             {
                 var xx = db.DM_KhuyenMai.Where(x => x.ID == idKhuyenMai).ToList();
-                if(xx.Count > 0)
+                if (xx.Count > 0)
                 {
                     return xx.Select(x => new
                     {

@@ -2774,7 +2774,6 @@
         ajaxHelper(BH_KhuyenMaiUri + "getChiTiet_KhuyenMai?ID_KhuyenMai=" + item.ID, "GET").done(function (data) {
             self.BH_KhuyenMai_ChiTiet(data);
             SetHeightShowDetail($(e.currentTarget));
-            console.log(self.BH_KhuyenMai_ChiTiet());
         });
         //ajaxHelper(BH_KhuyenMaiUri + "getList_LichSuKhuyenMai?ID_KhuyenMai=" + item.ID + "&numberPage=" + _numberPage_LS + "&PageSize=" + _numberRowns_LS, "GET").done(function (data) {
         //    self.BH_LichSuKhuyenMai(data.LstData);

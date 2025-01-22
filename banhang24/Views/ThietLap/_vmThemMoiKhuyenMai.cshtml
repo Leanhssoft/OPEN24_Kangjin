@@ -1148,29 +1148,38 @@
                 let ctKM = await self.GetChiTietKhuyenMai_byIdKhuyenMai(idKhuyenMai);
 
                 if (dataKM !== null) {
-                    self.objKhuyenMai = dataKM;
-                    self.objKhuyenMai.TrangThai = dataKM;
-
+                    self.objKhuyenMai.ID = dataKM.ID;
+                    self.objKhuyenMai.LoaiKhuyenMai = dataKM.LoaiKhuyenMai;
+                    self.objKhuyenMai.HinhThuc = dataKM.HinhThuc;
+                    self.objKhuyenMai.MaKhuyenMai = dataKM.MaKhuyenMai;
+                    self.objKhuyenMai.TenKhuyenMai = dataKM.TenKhuyenMai;
+                    self.objKhuyenMai.ThoiGianBatDau = dataKM.ThoiGianBatDau;
+                    self.objKhuyenMai.ThoiGianKetThuc = dataKM.ThoiGianKetThuc;
+                    self.objKhuyenMai.GhiChu = dataKM.GhiChu;
+                    self.objKhuyenMai.TatCaDoiTuong = dataKM.TatCaDoiTuong;
+                    self.objKhuyenMai.TatCaDonVi = dataKM.TatCaDonVi;
+                    self.objKhuyenMai.TatCaNhanVien = dataKM.TatCaNhanVien;
+                    self.objKhuyenMai.TrangThai = dataKM.TrangThai === true ? '1' : '0';
                     self.objKhuyenMai.TxtLoaiKhuyenMai = dataKM.LoaiKhuyenMai === commonStatisJs.LoaiKhuyenMai.HOA_DON ? 'Hóa đơn' : 'Hàng hóa';
-                    let loaiKM = self.ArrHinhThucKhuyenMai.filter(x => x.ID.toString().indexOf(dataKM.LoaiKhuyenMai) == 0);
+                    let loaiKM = self.ArrHinhThucKhuyenMai.filter(x => x.ID === dataKM.HinhThuc);
                     self.objKhuyenMai.TxtHinhThuc = loaiKM.length > 0 ? loaiKM[0].Text2 : '';
 
-                    let arrThang = self.objKhuyenMai.ThangApDung.split(',').map(Number).sort(function (x, y) {
+                    let arrThang = self.objKhuyenMai.ThangApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
                         let a = x; b = y;
                         return a > b ? 1 : a < b ? -1 : 0
                     });
-                    let arrNgay = self.objKhuyenMai.NgayApDung.split(',').map(Number).sort(function (x, y) {
+                    let arrNgay = self.objKhuyenMai.NgayApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
                         let a = x; b = y;
                         return a > b ? 1 : a < b ? -1 : 0
                     });
-                    let arrThu = self.objKhuyenMai.ThuApDung.split(',').map(Number).sort(function (x, y) {
+                    let arrThu = self.objKhuyenMai.ThuApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
                         let a = x; b = y;
                         return a > b ? 1 : a < b ? -1 : 0
-                    });;
-                    let arrGio = self.objKhuyenMai.GioApDung.split(',').map(Number).sort(function (x, y) {
+                    });
+                    let arrGio = self.objKhuyenMai.GioApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
                         let a = x; b = y;
                         return a > b ? 1 : a < b ? -1 : 0
-                    });;
+                    });
                     self.objKhuyenMai.arrThangApDung = [];
                     self.objKhuyenMai.arrNgayApDung = [];
                     self.objKhuyenMai.arrThuApDung = [];
@@ -1194,6 +1203,8 @@
                     }
                 }
                 ctKM.map(function (x) {
+                    x['TongTienHang'] = formatNumber3Digit(x.TongTienHang)
+                    x['GiamGia'] = formatNumber3Digit(x.GiamGia)
                     x['TenHangHoaTang'] = x.TenHangHoa
                     x['TenNhomHangHoaTang'] = x.TenNhomHangHoa
                     x['details'] = [{
@@ -1210,23 +1221,24 @@
 
                 // apdung: nhanvien, chinhanh, nhomkhach
                 let chinhanhAD = await self.GetListChiNhanhApDung(idKhuyenMai);
-                chinhanhAD.map(function(x){
+                chinhanhAD.map(function (x) {
                     x['Text1'] = x.TenDonVi
                 })
                 let nvApDung = await self.GetListNhanVienApDung(idKhuyenMai);
-                nvApDung.map(function(x){
+                nvApDung.map(function (x) {
                     x['Text1'] = x.MaNhanVien
                     x['Text2'] = x.TenNhanVien
-                }) 
-                
-                let nhomkhachAD = await self.GetListNhomKhachApDung(idKhuyenMai);
-                nhomkhachAD.map(function(x){
-                    x['Text1'] = x.TenNhomDoiTuong
                 })
-                console.log('cn ',chinhanhAD,nvApDung)
+
+                let nhomkhachAD = await self.GetListNhomKhachApDung(idKhuyenMai);
+                nhomkhachAD.map(function (x) {
+                    x['Text1'] = x.TenNhomDoiTuong
+                });
+
                 self.objKhuyenMai.arrChiNhanhApDung = chinhanhAD;
                 self.objKhuyenMai.arrNhanVienApDung = nvApDung;
                 self.objKhuyenMai.arrNhomKhachApDung = nhomkhachAD;
+
                 $('#vmThemMoiKhuyenMai').modal('show');
             },
             Loai24_ChangeLoaiApDung: function (item) {
@@ -1361,7 +1373,7 @@
 
                 for (let i = 0; i < self.chitietKM.length; i++) {
                     if (i === index) {
-                        self.chitietKM[i].TongTienHang = val;
+                        self.chitietKM[i].TongTienHang = formatNumber3Digit(val);
                         break;
                     }
                 }
@@ -1378,8 +1390,8 @@
                             if (formatNumberToFloat(val) > 100) {
                                 val = 100;
                             }
-                            self.chitietKM[i].GiamGia = val;
                         }
+                        self.chitietKM[i].GiamGia = val;
                         break;
                     }
                 }
@@ -1708,7 +1720,7 @@
                 }
 
                 if (!commonStatisJs.CheckNull(self.objKhuyenMai.MaKhuyenMai)) {
-                    let checkExists = await ajaxHelper(self.BH_KhuyenMaiAPI, 'CheckExists_MaKhuyenMai?idKhuyenMai=' + self.objKhuyenMai.ID
+                    let checkExists = await ajaxHelper(self.BH_KhuyenMaiAPI + 'CheckExists_MaKhuyenMai?idKhuyenMai=' + self.objKhuyenMai.ID
                         + '&maKhuyenMai=' + self.objKhuyenMai.MaKhuyenMai, 'GET').done().then(function (data) {
                             return data;
                         });
@@ -1751,13 +1763,22 @@
                     ctKM = ctKM.filter((x) => !commonStatisJs.CheckNull(x.TongTienHang))
                 }
                 else {
-                    ctKM = ctKM.filter((x) => !commonStatisJs.CheckNull(x.ID_DonViQuiDoiMua))
+                    ctKM = ctKM.filter((x) => !commonStatisJs.CheckNull(x.ID_DonViQuiDoiMua) || !commonStatisJs.CheckNull(x.ID_NhomHangHoaMua))
                 }
                 ctKM.map((x, index) => {
                     x.STT = index + 1
                 });
                 self.isSaving = false;
-                let dataKM = await ajaxHelper(self.BH_KhuyenMaiAPI + 'PostDM_KhuyenMai', 'POST', myData).done()
+
+                let sLoai = 'Thêm mới';
+                let url = 'PostDM_KhuyenMai';
+                if (self.typeUpdate === 2) {
+                    sLoai = 'Cập nhật';
+                    url = 'PutDM_KhuyenMai';
+                    myData.objKhuyenMai.NguoiSua = VHeader.UserLogin;
+                    myData.objKhuyenMai.TrangThai = self.objKhuyenMai.TrangThai == '1' ? true : false;
+                }
+                let dataKM = await ajaxHelper(self.BH_KhuyenMaiAPI + url, 'POST', myData).done()
                     .then(function (data) {
                         return data;
                     });
@@ -1778,7 +1799,7 @@
                             return data;
                         });
                     if (dataCTKM.res) {
-                        ShowMessage_Success('Thêm mới chương trình khuyến mại thành công');
+                        ShowMessage_Success(sLoai + ' chương trình khuyến mại thành công');
                     }
 
                     if (self.objKhuyenMai.arrChiNhanhApDung.length > 0 || self.objKhuyenMai.arrNhanVienApDung.length > 0 ||
