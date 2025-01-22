@@ -221,7 +221,7 @@
                                                        v-model="ctkm.TongTienHang"
                                                        v-on:keyup="EditTongTienHang(ctkm,index)" />
                                             </div>
-                                            <div class="col-lg-2 flex flex-row nopadding">
+                                            <div class="col-lg-3 flex flex-row nopadding">
                                                 <input class="form-control" title="Giá trị giảm giá"
                                                        v-model="ctkm.GiamGia"
                                                        v-on:keyup="EditGiamGia(ctkm,index)" />
@@ -232,11 +232,11 @@
                                                     <span class="toggle-element toggle-element-percent selected">%</span>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-7 flex flex-row nopadding">
-                                                <div class="col-lg-3">
+                                            <div class="col-lg-6 flex flex-row nopadding">
+                                                <div class="col-lg-2">
                                                     <input class="form-control" title="Số lượng được giảm" placeholder="SL" v-model="ctkm.SoLuong" />
                                                 </div>
-                                                <div class="col-lg-8 nopadding" v-on:click="SetIndexChosing(index)">
+                                                <div class="col-lg-7 nopadding" v-on:click="SetIndexChosing(index)">
                                                     <products :id-chi-nhanh="inforLogin.ID_DonVi"
                                                               :role-add="true"
                                                               v-on:chose-product="ChoseHangTang"
@@ -574,16 +574,17 @@
                                             </div>
                                             <div class="col-lg-10 col-lg-offset-2 nopadding" style="margin-top:24px">
                                                 <div class="col-lg-12 nopadding flex flex-row" style="align-items: center; margin-bottom: 12px"
-                                                     v-for="(ct,index2) in ctkm.details">
+                                                     v-for="(ct,index2) in ctkm.details"
+                                                     v-on:click="Loai24_SetIndexChosing(index,index2)">
                                                     <div class="col-lg-5 flex flex-row">
                                                         <label class="col-lg-6 nopadding-left">Số lượng từ</label>
                                                         <div class="col-lg-6 nopadding-left">
                                                             <input class="form-control" title="Số lượng hàng mua" placeholder="SL mua"
                                                                    v-model="ct.SoLuongMua"
-                                                                   v-on:keyup="Loai24_EditSoLuongMua(ct,index, index2)" />
+                                                                   v-on:keyup="Loai24_EditSoLuongMua(index, index2)" />
                                                         </div>
                                                     </div>
-                                                    <div class="col-lg-3" v-on:click="Loai24_SetIndexChosing(index,index2)">
+                                                    <div class="col-lg-3">
                                                         <loai-khuyen-mai-24 placeholder="Chọn"
                                                                             :text-search="ct.txtLoaiApDung"
                                                                             :list-all="GiaBanTheoSoLuong_LoaiKM"
@@ -595,28 +596,27 @@
                                                     <div class="col-lg-3 nopadding-left">
                                                         <input class="form-control"
                                                                v-model="ct.GiaKhuyenMai"
-                                                               v-on:keyup="Loai24_EditGiaKhuyenMai(ct,index,index2)"
+                                                               v-on:keyup="Loai24_EditGiaKhuyenMai(index,index2)"
                                                                v-bind:placeholder="ct.loaiApDung == 2?'Giá trị giảm':'Nhập giá bán'"
                                                                v-bind:title="ct.loaiApDung == 2?'Giảm giá':'Giá bán'" />
                                                     </div>
-                                                    <div class="col-lg-1 nopadding-left"
-                                                         v-on:click="Loai24_ChangePtramVND(ctkm,index, index2)"
-                                                         v-bind:class="[ct.GiamGiaTheoPhanTram ? 'active-re' : '']">
-                                                        <div class="toggle active-re">
+                                                    <div class="col-lg-1 nopadding-left">
+                                                        <div class="toggle" v-on:click="Loai24_ChangePtramVND(index, index2)"
+                                                             v-if="ct.loaiApDung === 2"
+                                                             v-bind:class="[ct.GiamGiaTheoPhanTram ? 'active-re' : '']">
                                                             <div class="toggle-line"></div>
                                                             <span class="toggle-element">VNĐ</span>
                                                             <span class="toggle-element toggle-element-percent selected">%</span>
                                                         </div>
                                                     </div>
-                                                    <div class=" flex flex-end nopading-right col-lg-1"
-                                                         @*v-bind:class="[ct.loaiApDung == 2 ? 'col-lg-1' : 'col-lg-2']"*@>
-                                                        <a href="javascript:void(0)" class="btn-gray" title="Xóa" v-on:click="Loai24_RemoveDetails (ctkm,index,index2)">
+                                                    <div class=" flex flex-end nopading-right col-lg-1">
+                                                        <a href="javascript:void(0)" class="btn-gray" title="Xóa" v-on:click="Loai24_RemoveDetails (index,index2)">
                                                             <i class="material-icons" style="color:#B60201;">remove</i>
                                                         </a>
                                                     </div>
                                                 </div>
 
-                                                <div class="col-lg-12" style="margin-top:16px">
+                                                <div class="col-lg-4" style="margin-top:16px">
                                                     <a href="javascript:void(0)" class="btn-gray flex flex-row" title="Thêm dòng"
                                                        v-on:click="Loai24_AddDetail(index)">
                                                         <i class="material-icons" style="color:blue;">add</i>
@@ -1007,39 +1007,9 @@
                     GiaKhuyenMai: '',
 
                     TenHangHoaMua: '',
+                    GiaBan_HangMua: 0,
                     TenHangHoaTang: '',
-                    TenNhomHangHoaMua: '',
-                    TenNhomHangHoaTang: '',
-
-                    details: [
-                        {
-                            STT: 0,
-                            SoLuongMua: '',
-                            loaiApDung: 1,// 1. giakhuyenmai, 2. giamgia
-                            txtLoaiApDung: 'Giá bán',
-                            GiaKhuyenMai: '',
-                            GiamGia: '',
-                            GiamGiaTheoPhanTram: true,
-                        }
-                    ]
-                }
-            },
-            newCTKM_loai24: function () {
-                return {
-                    STT: 0,
-                    TongTienHang: '',
-                    GiamGia: '', // diemcong, giamgia
-                    GiamGiaTheoPhanTram: true,
-                    ID_DonViQuiDoiMua: null,
-                    ID_NhomHangHoaMua: null,
-
-                    ID_DonViQuiDoi: null,
-                    ID_NhomHangHoa: null,
-                    SoLuong: '',
-                    GiaKhuyenMai: '',
-
-                    TenHangHoaMua: '',
-                    TenHangHoaTang: '',
+                    GiaBan_HangTang: 0,
                     TenNhomHangHoaMua: '',
                     TenNhomHangHoaTang: '',
 
@@ -1283,10 +1253,6 @@
                 let self = this;
                 self.chitietKM.push(self.newCTKM());
             },
-            Loai24_ClickThemDong: function () {
-                let self = this;
-
-            },
             DateFrom_Change: function (e) {
                 let self = this;
                 var dt = moment(e).format('YYYY-MM-DD');
@@ -1352,7 +1318,7 @@
                     }
                 }
             },
-            Loai24_ChangePtramVND: function (ctkm, index, indexCT) {
+            Loai24_ChangePtramVND: function (index, indexCT) {
                 let self = this;
                 for (let i = 0; i < self.chitietKM.length; i++) {
                     if (i === index) {
@@ -1420,7 +1386,7 @@
                     }
                 }
             },
-            Loai24_EditSoLuongMua: function (ctkm, index, indexCT) {
+            Loai24_EditSoLuongMua: function (index, indexCT) {
                 let self = this;
                 let elm = $(event.currentTarget);
                 let val = $(elm).val();
@@ -1437,7 +1403,7 @@
                 }
             },
 
-            Loai24_EditGiaKhuyenMai: function (ctkm, index, indexCT) {
+            Loai24_EditGiaKhuyenMai: function (index, indexCT) {
                 let self = this;
                 let elm = $(event.currentTarget);
                 formatNumberObj(elm);
@@ -1447,21 +1413,28 @@
                     if (i === index) {
                         for (let j = 0; j < self.chitietKM[i].details.length; j++) {
                             let ct = self.chitietKM[i].details[j];
-                            if (ct.loaiApDung == 1) {// gia khuyenmai
-                                self.chitietKM[i].details[j].GiaKhuyenMai = val;
-                            }
-                            else {// giam gia %/vnd
-                                if (ct.GiamGiaTheoPhanTram && val > 100) {
-                                    val = 100;
+                            if (j === indexCT) {
+                                if (ct.loaiApDung == 1) {// gia khuyenmai
+                                    self.chitietKM[i].details[j].GiaKhuyenMai = val;
                                 }
-                                self.chitietKM[i].details[j].GiamGia = val;
+                                else {// giam gia %/vnd
+                                    if (ct.GiamGiaTheoPhanTram) {
+                                        if (formatNumberToFloat(val) > 100) {
+                                            val = 100;
+                                        }
+                                    }
+                                    self.chitietKM[i].details[j].GiamGia = val;
+                                    // do dùng chung 1 ô input GiaKhuyenMai
+                                    self.chitietKM[i].details[j].GiaKhuyenMai = val;
+                                }
+                                break;
                             }
                         }
                         break;
                     }
                 }
             },
-            Loai24_RemoveDetails: function (ctkm, index, indexCT) {
+            Loai24_RemoveDetails: function (index, indexCT) {
                 let self = this;
                 for (let i = 0; i < self.chitietKM.length; i++) {
                     if (i === index) {
@@ -1507,6 +1480,7 @@
                     if (i === self.indexChosing) {
                         self.chitietKM[i].ID_DonViQuiDoiMua = proudctItem.ID_DonViQuiDoi;
                         self.chitietKM[i].TenHangHoaMua = proudctItem.TenHangHoa;
+                        self.chitietKM[i].GiaBan_HangMua = proudctItem.GiaBan;
                         self.chitietKM[i].ID_NhomHangHoaMua = null;
                         self.chitietKM[i].TenNhomHangHoaMua = '';
                         break;
@@ -1519,6 +1493,7 @@
                     if (i === self.indexChosing) {
                         self.chitietKM[i].ID_DonViQuiDoi = proudctItem.ID_DonViQuiDoi;
                         self.chitietKM[i].TenHangHoaTang = proudctItem.TenHangHoa;
+                        self.chitietKM[i].GiaBan_HangTang = proudctItem.GiaBan;
                         self.chitietKM[i].ID_NhomHangHoa = null;
                         self.chitietKM[i].TenNhomHangHoaTang = '';
                         break;
@@ -1644,8 +1619,7 @@
                             ShowMessage_Danger("Vui lòng chọn hàng/nhóm hàng mua");
                             return false;
                         }
-
-                        if (soLuongMua == 0) {
+                        if (soLuongMua == 0 && self.objKhuyenMai.HinhThuc !== commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG) {
                             ShowMessage_Danger("Vui lòng nhập Số lượng mua");
                             return false;
                         }
@@ -1688,21 +1662,24 @@
                                 break;
                             case commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG:
                                 {
-                                    let giamGia = formatNumberToFloat(forOut.GiamGia);
-                                    if (giamGia == 0) {
-                                        ShowMessage_Danger("Vui lòng nhập giá trị Giảm giá");
-                                        return false;
-                                    }
-                                    let slTang = formatNumberToFloat(forOut.SoLuong);
-                                    let idQuyDoi = forOut.ID_DonViQuiDoi;
-                                    let idNhomHang = forOut.ID_NhomHangHoa;
-                                    if (slTang == 0) {
-                                        ShowMessage_Danger("Vui lòng nhập số lượng hàng được giảm giá");
-                                        return false;
-                                    }
-                                    if (commonStatisJs.CheckNull(idQuyDoi) && commonStatisJs.CheckNull(idNhomHang)) {
-                                        ShowMessage_Danger("Vui lòng chọn hàng/nhóm hàng được giảm giá");
-                                        return false;
+                                    for (let j = 0; j < forOut.details.length; j++) {
+                                        let forIn = forOut.details[j];
+                                        let soluongMua = formatNumberToFloat(forIn.SoLuongMua);
+                                        if (soluongMua === 0) {
+                                            ShowMessage_Danger("Vui lòng nhập Số lượng mua");
+                                            return false;
+                                        }
+                                        let giaKhuyenMai = formatNumberToFloat(forIn.GiaKhuyenMai);
+                                        if (giaKhuyenMai === 0) {
+                                            if (forIn.loaiApDung === 1) {
+                                                ShowMessage_Danger("Vui lòng nhập giá bán khuyến mại");
+                                                return false;
+                                            }
+                                            else {
+                                                ShowMessage_Danger("Vui lòng nhập giá trị Giảm giá");
+                                                return false;
+                                            }
+                                        }
                                     }
                                 }
                                 break;
@@ -1784,17 +1761,47 @@
                     });
 
                 if (dataKM.res) {
+                    let arrCTKM = [];
                     let idKhuyenMai = dataKM.dataSoure.ID;
                     if (self.objKhuyenMai.HinhThuc = commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG) {
+                        for (let i = 0; i < ctKM.length; i++) {
+                            let forOut = ctKM[i];
+                            for (let j = 0; j < forOut.details.length; j++) {
+                                let forIn = forOut.details[j];
+                                let obj = {
+                                    ID_DonViQuiDoiMua: forOut.ID_DonViQuiDoiMua,
+                                    ID_NhomHangHoaMua: forOut.ID_NhomHangHoaMua,
+                                    ID_DonViQuiDoi: null,
+                                    ID_NhomHangHoa: null,
+                                    TongTienHang: 0,
 
+                                    STT: j + 1,
+                                    SoLuongMua: forIn.SoLuongMua,
+                                }
+                                if (forIn.loaiApDung === 1) {
+                                    // giakhuyenmai
+                                    obj.GiaKhuyenMai = forIn.GiaKhuyenMai;
+                                    obj.GiamGia = 0;
+                                    obj.GiamGiaTheoPhanTram = false;
+                                }
+                                else {
+                                    // giamgia
+                                    obj.GiaKhuyenMai = 0;
+                                    obj.GiamGia = forIn.GiaKhuyenMai;
+                                    obj.GiamGiaTheoPhanTram = forIn.GiamGiaTheoPhanTram;
+                                }
+                                arrCTKM.push(obj);
+                            }
+                        }
                     }
                     else {
                         ctKM.map((x, index) => {
                             x.STT = index + 1
                         });
+                        arrCTKM = ctKM;
                     }
 
-                    let dataCTKM = await ajaxHelper(self.BH_KhuyenMaiAPI + 'PostDM_KhuyenMaiChiTiet?idKhuyenMai=' + idKhuyenMai, 'POST', { lstChiTietKM: ctKM }).done()
+                    let dataCTKM = await ajaxHelper(self.BH_KhuyenMaiAPI + 'PostDM_KhuyenMaiChiTiet?idKhuyenMai=' + idKhuyenMai, 'POST', { lstChiTietKM: arrCTKM }).done()
                         .then(function (data) {
                             return data;
                         });
