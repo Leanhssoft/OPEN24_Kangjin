@@ -898,7 +898,9 @@
                 arrNhanVienApDung: [],
                 arrNhomKhachApDung: [],
             },
-            chitietKM: []
+            objKhuyenMaiOld: {},
+            chitietKM: [],
+            chitietKMOld: [],
         },
         methods: {
             PageLoad: async function () {
@@ -1171,8 +1173,9 @@
                     for (let i = 0; i < arrGio.length; i++) {
                         self.objKhuyenMai.arrGioApDung.push({ ID: arrGio[i], Text1: arrGio[i] });
                     }
+
+                    self.objKhuyenMaiOld = $.extend({}, self.objKhuyenMai);
                 }
-                console.log('ctKM ', ctKM)
                 // chitiet khuyenmai
                 if (self.objKhuyenMai.HinhThuc === commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG) {
                     let arrIdQuyDoiMua = [];
@@ -1271,6 +1274,7 @@
                         }
                     }
                     self.chitietKM = ctKMOut;
+                    self.chitietKMOld = $.extend(true, [], ctKMOut);
                 }
                 else {
                     ctKM.map(function (x) {
@@ -1289,6 +1293,7 @@
                         }]
                     })
                     self.chitietKM = ctKM;
+                    self.chitietKMOld = $.extend(true, [], ctKM);
                 }
 
                 // apdung: nhanvien, chinhanh, nhomkhach
@@ -1849,13 +1854,113 @@
                 });
                 self.isSaving = false;
 
-                let sLoai = 'Thêm mới', sDiary = '<b> Thông tin chi tiết: </b>';
+                let sLoai = 'Thêm mới', sDiary = '<b> Thông tin chi tiết: </b>', sDiaryOld = '';
                 let url = 'PostDM_KhuyenMai';
                 if (self.typeUpdate === 2) {
                     sLoai = 'Cập nhật';
                     url = 'PutDM_KhuyenMai';
                     myData.objKhuyenMai.NguoiSua = VHeader.UserLogin;
                     myData.objKhuyenMai.TrangThai = self.objKhuyenMai.TrangThai == '1' ? true : false;
+
+                    sDiaryOld = '<br /> <b> Thông tin cũ: </b>';
+                    sDiaryOld += '<br />- Mã chương trình: '.concat(self.objKhuyenMaiOld.MaKhuyenMai,
+                        '<br />- Tên chương trình: ', self.objKhuyenMaiOld.TenKhuyenMai,
+                        '<br />- Hình thức: ', self.objKhuyenMaiOld.TxtHinhThuc);
+
+                    let sDiaryDetailsOld = '';
+                    switch (self.objKhuyenMaiOld.HinhThuc) {
+                        case commonStatisJs.HinhThucKhuyenMai.HD_GIAM_GIAHD:
+                            {
+                                for (let i = 0; i < self.chitietKMOld.length; i++) {
+                                    let itFor = self.chitietKMOld[i];
+                                    sDiaryDetailsOld += '<br /> Tổng tiền hàng từ: '.concat(itFor.TongTienHang, ', giảm giá ', itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '%' : 'đ');
+                                }
+                            }
+                            break;
+                        case commonStatisJs.HinhThucKhuyenMai.HD_TANG_HANG:
+                            {
+                                for (let i = 0; i < self.chitietKMOld.length; i++) {
+                                    let itFor = self.chitietKMOld[i];
+                                    sDiaryDetailsOld += '<br /> Tổng tiền hàng từ: '.concat(itFor.TongTienHang, ', tặng ', itFor.SoLuong, !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang);
+                                }
+                            }
+                            break;
+                        case commonStatisJs.HinhThucKhuyenMai.HD_GIAM_GIA_HANG:
+                            {
+                                for (let i = 0; i < self.chitietKMOld.length; i++) {
+                                    let itFor = self.chitietKMOld[i];
+                                    sDiaryDetailsOld += '<br /> Tổng tiền hàng từ: '.concat(itFor.TongTienHang, ', giảm giá ', itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '%' : 'đ',
+                                        !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang);
+                                }
+                            }
+                            break;
+                        case commonStatisJs.HinhThucKhuyenMai.HD_TANG_DIEM:
+                            {
+                                for (let i = 0; i < self.chitietKMOld.length; i++) {
+                                    let itFor = self.chitietKMOld[i];
+                                    sDiaryDetailsOld += '<br /> Tổng tiền hàng từ: '.concat(itFor.TongTienHang, ', tặng ', itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '%' : 'đ', ' điểm');
+                                }
+                            }
+                            break;
+                        case commonStatisJs.HinhThucKhuyenMai.HH_GIAM_GIA_HANG:
+                            {
+                                for (let i = 0; i < self.chitietKMOld.length; i++) {
+                                    let itFor = self.chitietKMOld[i];
+                                    sDiaryDetailsOld += '<br /> Mua '.concat(itFor.SoLuongMua,
+                                        !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : 'sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được giảm giá ',
+                                        itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '% ' : 'đ ', itFor.SoLuong,
+                                        !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang, ' được giảm giá ',
+                                    );
+                                }
+                            }
+                            break;
+                        case commonStatisJs.HinhThucKhuyenMai.HH_TANG_HANG:
+                            {
+                                for (let i = 0; i < self.chitietKMOld.length; i++) {
+                                    let itFor = self.chitietKMOld[i];
+                                    sDiaryDetailsOld += '<br /> Mua '.concat(itFor.SoLuongMua,
+                                        !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được tặng ',
+                                        itFor.SoLuong,
+                                        !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang
+                                    );
+                                }
+                            }
+                            break;
+                        case commonStatisJs.HinhThucKhuyenMai.HH_TANG_DIEM:
+                            {
+                                for (let i = 0; i < self.chitietKMOld.length; i++) {
+                                    let itFor = self.chitietKMOld[i];
+                                    sDiaryDetailsOld += '<br /> Mua '.concat(itFor.SoLuongMua,
+                                        !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được tặng ',
+                                        itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '%' : 'đ', ' điểm'
+                                    );
+                                }
+                            }
+                            break;
+                        case commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG:
+                            {
+                                for (let i = 0; i < self.chitietKMOld.length; i++) {
+                                    let forOut = self.chitietKMOld[i];
+                                    sDiaryOld += ' <br /> Khi mua '.concat(!commonStatisJs.CheckNull(forOut.TenHangHoaMua) ? 'sản phầm ' + forOut.TenHangHoaMua : 'sản phầm thuộc nhóm ' + forOut.TenNhomHangHoaMua);
+
+                                    for (let j = 0; j < forOut.details.length; j++) {
+                                        let forIn = forOut.details[j];
+                                        let sDiaryDetailsOld = ' <br />- Số lượng từ: '.concat(forIn.SoLuongMua);
+                                        
+                                        if (forIn.loaiApDung === 1) {
+                                            sDiaryDetailsOld += ', giá bán: '.concat(forIn.GiaKhuyenMai);
+                                        }
+                                        else {
+                                            sDiaryDetailsOld += ', giảm giá: '.concat(forIn.GiaKhuyenMai, forIn.GiamGiaTheoPhanTram ? '%' : 'đ');
+                                        }
+                                        sDiaryOld += sDiaryDetailsOld;
+                                    }
+                                }
+                            }
+                            break;
+                    }
+
+                    sDiaryOld += sDiaryDetailsOld;
                 }
                 let dataKM = await ajaxHelper(self.BH_KhuyenMaiAPI + url, 'POST', myData).done()
                     .then(function (data) {
@@ -1870,11 +1975,11 @@
                         let stt = 1;
                         for (let i = 0; i < ctKM.length; i++) {
                             let forOut = ctKM[i];
-                            sDiary += ' <br /> - Khi mua '.concat(!commonStatisJs.CheckNull(forOut.TenHangHoaMua) ? 'sản phầm ' + forOut.TenHangHoaMua : 'sản phầm thuộc nhóm ' + forOut.TenNhomHangHoaMua);
+                            sDiary += ' <br /> Khi mua '.concat(!commonStatisJs.CheckNull(forOut.TenHangHoaMua) ? 'sản phầm ' + forOut.TenHangHoaMua : 'sản phầm thuộc nhóm ' + forOut.TenNhomHangHoaMua);
 
                             for (let j = 0; j < forOut.details.length; j++) {
                                 let forIn = forOut.details[j];
-                                let sDiaryDetails = ' <br /> Số lượng từ: '.concat(forIn.SoLuongMua);
+                                let sDiaryDetails = ' <br />- Số lượng từ: '.concat(forIn.SoLuongMua);
                                 let obj = {
                                     ID_DonViQuiDoiMua: forOut.ID_DonViQuiDoiMua,
                                     ID_NhomHangHoaMua: forOut.ID_NhomHangHoaMua,
@@ -1903,7 +2008,6 @@
                                 arrCTKM.push(obj);
                                 stt += 1;
                             }
-
                         }
                     }
                     else {
@@ -2091,8 +2195,8 @@
                         ID_DonVi: VHeader.IdDonVi,
                         ChucNang: 'Danh mục khuyến mại',
                         NoiDung: sLoai.concat(' chương trình khuyến mại. Tên chương trình: ', self.objKhuyenMai.TenKhuyenMai),
-                        NoiDungChiTiet: sDiary,
-                        LoaiNhatKy: 3
+                        NoiDungChiTiet: sDiary.concat(sDiaryOld),
+                        LoaiNhatKy: self.typeUpdate
                     }
                     Insert_NhatKyThaoTac_1Param(diary);
                 }
