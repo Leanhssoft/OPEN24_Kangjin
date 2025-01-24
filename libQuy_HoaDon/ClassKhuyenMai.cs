@@ -599,25 +599,27 @@ namespace libQuy_HoaDon
                       where kmct.ID_KhuyenMai == ID_KhuyenMai
                       select new
                       {
-                          ID = kmct.ID,
-                          ID_KhuyenMai = kmct.ID_KhuyenMai,
-                          ID_DonViQuiDoi = kmct.ID_DonViQuiDoi,
-                          MaHangHoaMua = TM == null ? "" : TM.MaHangHoa,
-                          TenHangHoa = TH.TenHangHoa,
-                          ID_DonViQuiDoiMua = kmct.ID_DonViQuiDoiMua,
-                          TenHangHoaMua = THM.TenHangHoa,
-                          ID_NhomHangHoa = kmct.ID_NhomHangHoa,
-                          TenNhomHangHoa = TNH.TenNhomHangHoa,
-                          ID_NhomHangHoaMua = kmct.ID_NhomHangHoaMua,
-                          TenNhomHangHoaMua = TNHM.TenNhomHangHoa,
-                          SoLuong = kmct.SoLuong,
-                          SoLuongMua = kmct.SoLuongMua,
-                          GiamGia = kmct.GiamGia,
+                          kmct.STT,
+                          kmct.ID,
+                          kmct.ID_KhuyenMai,
+                          kmct.ID_DonViQuiDoi,
+                          TH.TenHangHoa,
+                          kmct.ID_DonViQuiDoiMua,
+                          kmct.ID_NhomHangHoa,
+                          TNH.TenNhomHangHoa,
+                          kmct.ID_NhomHangHoaMua,
+                          kmct.SoLuong,
+                          kmct.SoLuongMua,
+                          kmct.GiamGia,
+                          kmct.TongTienHang,
+                          kmct.GiaKhuyenMai,
+                          kmct.GiamGiaTheoPhanTram,
                           DiemCong = kmct.GiamGia,
-                          TongTienHang = kmct.TongTienHang,
-                          GiaKhuyenMai = kmct.GiaKhuyenMai,
-                          GiamGiaTheoPhanTram = kmct.GiamGiaTheoPhanTram,
-                          STT = kmct.STT
+                          TenHangHoaMua = THM.TenHangHoa,
+                          MaHangHoaMua = TM == null ? "" : TM.MaHangHoa,
+                          GiaBan_HangMua = TM == null ? TM.GiaBan : 0,
+                          TenNhomHangHoaMua = TNHM.TenNhomHangHoa,
+                          GiaBan_HangTang = MD == null ? 0 : MD.GiaBan,
                       });
             try
             {
@@ -696,17 +698,17 @@ namespace libQuy_HoaDon
         public List<Object> getLisDonViKM(Guid ID_KhuyenMai)
         {
             var chinhanhApDung = (from kmap in db.DM_KhuyenMai_ApDung
-                                   where kmap.ID_KhuyenMai == ID_KhuyenMai
-                                   group new
-                                   {
-                                       kmap.ID_DonVi,
-                                       kmap.ID_KhuyenMai
-                                   } by new { kmap.ID_DonVi, kmap.ID_KhuyenMai } into g
-                                   select new
-                                   {
-                                       g.Key.ID_KhuyenMai,
-                                       g.Key.ID_DonVi
-                                   }).ToList();
+                                  where kmap.ID_KhuyenMai == ID_KhuyenMai
+                                  group new
+                                  {
+                                      kmap.ID_DonVi,
+                                      kmap.ID_KhuyenMai
+                                  } by new { kmap.ID_DonVi, kmap.ID_KhuyenMai } into g
+                                  select new
+                                  {
+                                      g.Key.ID_KhuyenMai,
+                                      g.Key.ID_DonVi
+                                  }).ToList();
 
             var tb = (from kmap in chinhanhApDung
                       join nv in db.DM_DonVi on kmap.ID_DonVi equals nv.ID
@@ -745,17 +747,17 @@ namespace libQuy_HoaDon
         public List<DM_NhomKhachHangKM> getlistNhomHangKM(Guid ID_KhuyenMai)
         {
             var nhomKhachApDung = (from kmap in db.DM_KhuyenMai_ApDung
-                            where kmap.ID_KhuyenMai == ID_KhuyenMai
-                            group new
-                            {
-                                kmap.ID_NhomKhachHang,
-                                kmap.ID_KhuyenMai
-                            } by new { kmap.ID_NhomKhachHang, kmap.ID_KhuyenMai } into g
-                            select new
-                            {
-                                g.Key.ID_KhuyenMai,
-                                g.Key.ID_NhomKhachHang
-                            }).ToList();
+                                   where kmap.ID_KhuyenMai == ID_KhuyenMai
+                                   group new
+                                   {
+                                       kmap.ID_NhomKhachHang,
+                                       kmap.ID_KhuyenMai
+                                   } by new { kmap.ID_NhomKhachHang, kmap.ID_KhuyenMai } into g
+                                   select new
+                                   {
+                                       g.Key.ID_KhuyenMai,
+                                       g.Key.ID_NhomKhachHang
+                                   }).ToList();
 
             var tb = (from kmap in nhomKhachApDung
                       join nv in db.DM_NhomDoiTuong on kmap.ID_NhomKhachHang equals nv.ID

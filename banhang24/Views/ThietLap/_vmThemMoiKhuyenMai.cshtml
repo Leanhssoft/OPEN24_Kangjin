@@ -221,7 +221,7 @@
                                                        v-model="ctkm.TongTienHang"
                                                        v-on:keyup="EditTongTienHang(ctkm,index)" />
                                             </div>
-                                            <div class="col-lg-3 flex flex-row nopadding">
+                                            <div class="col-lg-2 flex flex-row nopadding">
                                                 <input class="form-control" title="Giá trị giảm giá"
                                                        v-model="ctkm.GiamGia"
                                                        v-on:keyup="EditGiamGia(ctkm,index)" />
@@ -232,7 +232,7 @@
                                                     <span class="toggle-element toggle-element-percent selected">%</span>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6 flex flex-row nopadding">
+                                            <div class="col-lg-7 flex flex-row nopadding">
                                                 <div class="col-lg-2">
                                                     <input class="form-control" title="Số lượng được giảm" placeholder="SL" v-model="ctkm.SoLuong" />
                                                 </div>
@@ -1172,22 +1172,124 @@
                         self.objKhuyenMai.arrGioApDung.push({ ID: arrGio[i], Text1: arrGio[i] });
                     }
                 }
-                ctKM.map(function (x) {
-                    x['TongTienHang'] = formatNumber3Digit(x.TongTienHang)
-                    x['GiamGia'] = formatNumber3Digit(x.GiamGia)
-                    x['TenHangHoaTang'] = x.TenHangHoa
-                    x['TenNhomHangHoaTang'] = x.TenNhomHangHoa
-                    x['details'] = [{
-                        STT: 0,
-                        SoLuongMua: '',
-                        loaiApDung: 1,// 1. giakhuyenmai, 2. giamgia
-                        txtLoaiApDung: 'Giá bán',
-                        GiaKhuyenMai: '',
-                        GiamGia: '',
-                        GiamGiaTheoPhanTram: true,
-                    }]
-                })
-                self.chitietKM = ctKM;
+                console.log('ctKM ', ctKM)
+                // chitiet khuyenmai
+                if (self.objKhuyenMai.HinhThuc === commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG) {
+                    let arrIdQuyDoiMua = [];
+                    let ctKMOut = [];
+                    for (let i = 0; i < ctKM.length; i++) {
+                        let itFor = ctKM[i];
+                        let loaiApDung = 2, txtLoaiApDung = 'Giảm giá';
+                        // do dùng chung ô input của Giảm giá - Giá khuyến mại
+                        let giaKhuyenMaiNew = formatNumber3Digit(itFor.GiamGia);
+                        if (itFor.GiaKhuyenMai > 0) {
+                            loaiApDung = 1;
+                            txtLoaiApDung = 'Giá bán';
+                            giaKhuyenMaiNew = formatNumber3Digit(itFor.GiaKhuyenMai);
+                        }
+
+                        if (!commonStatisJs.CheckNull(itFor.ID_DonViQuiDoiMua) && $.inArray(itFor.ID_DonViQuiDoiMua, arrIdQuyDoiMua) === -1
+                            || (!commonStatisJs.CheckNull(itFor.ID_NhomHangHoaMua) && $.inArray(itFor.ID_NhomHangHoaMua, arrIdQuyDoiMua) === -1)) {
+
+                            if (!commonStatisJs.CheckNull(itFor.ID_DonViQuiDoiMua)) {
+                                arrIdQuyDoiMua.push(itFor.ID_DonViQuiDoiMua);
+
+                                ctKMOut.push({
+                                    ID_DonViQuiDoi: null,
+                                    TongTienHang: 0,
+                                    ID_DonViQuiDoiMua: itFor.ID_DonViQuiDoiMua,
+                                    ID_NhomHangHoaMua: null,
+                                    ID_DonViQuiDoi: null,
+                                    ID_NhomHangHoa: null,
+                                    TongTienHang: 0,
+                                    TenHangHoaMua: itFor.TenHangHoaMua,
+                                    GiaBan_HangMua: itFor.GiaBan_HangMua, //todo
+                                    TenHangHoaTang: '',
+                                    GiaBan_HangTang: 0,
+                                    TenNhomHangHoaMua: '',
+                                    TenNhomHangHoaTang: '',
+
+                                    details: [{
+                                        STT: itFor.STT,
+                                        SoLuongMua: itFor.SoLuongMua,
+                                        GiaKhuyenMai: giaKhuyenMaiNew,
+                                        GiamGia: itFor.GiamGia,
+                                        GiamGiaTheoPhanTram: itFor.GiamGiaTheoPhanTram,
+                                        loaiApDung: loaiApDung,
+                                        txtLoaiApDung: txtLoaiApDung
+                                    }]
+                                });
+                            }
+                            if (!commonStatisJs.CheckNull(itFor.ID_NhomHangHoaMua)) {
+
+                                arrIdQuyDoiMua.push(itFor.ID_NhomHangHoaMua);
+
+                                ctKMOut.push({
+                                    ID_DonViQuiDoi: null,
+                                    TongTienHang: 0,
+                                    ID_DonViQuiDoiMua: null,
+                                    ID_NhomHangHoaMua: itFor.ID_NhomHangHoaMua,
+                                    ID_DonViQuiDoi: null,
+                                    ID_NhomHangHoa: null,
+                                    TongTienHang: 0,
+                                    TenHangHoaMua: '',
+                                    GiaBan_HangMua: 0,
+                                    TenHangHoaTang: '',
+                                    GiaBan_HangTang: 0,
+                                    TenNhomHangHoaMua: itFor.TenNhomHangHoaMua,
+                                    TenNhomHangHoaTang: '',
+
+                                    details: [{
+                                        STT: itFor.STT,
+                                        SoLuongMua: itFor.SoLuongMua,
+                                        GiaKhuyenMai: giaKhuyenMaiNew,
+                                        GiamGia: itFor.GiamGia,
+                                        GiamGiaTheoPhanTram: itFor.GiamGiaTheoPhanTram,
+                                        loaiApDung: loaiApDung,
+                                        txtLoaiApDung: txtLoaiApDung
+                                    }]
+                                });
+                            }
+                        }
+                        else {
+                            for (let j = 0; j < ctKMOut.length; j++) {
+                                let forIn = ctKMOut[j];
+                                if (!commonStatisJs.CheckNull(forIn.ID_DonViQuiDoiMua) && forIn.ID_DonViQuiDoiMua === itFor.ID_DonViQuiDoiMua
+                                    || !commonStatisJs.CheckNull(forIn.ID_NhomHangHoaMua) && forIn.ID_NhomHangHoaMua === itFor.ID_NhomHangHoaMua) {
+                                    ctKMOut[j].details.push({
+                                        STT: itFor.STT,
+                                        SoLuongMua: itFor.SoLuongMua,
+                                        GiaKhuyenMai: giaKhuyenMaiNew,
+                                        GiamGia: itFor.GiamGia,
+                                        GiamGiaTheoPhanTram: itFor.GiamGiaTheoPhanTram,
+                                        loaiApDung: loaiApDung,
+                                        txtLoaiApDung: txtLoaiApDung
+                                    });
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    self.chitietKM = ctKMOut;
+                }
+                else {
+                    ctKM.map(function (x) {
+                        x['TongTienHang'] = formatNumber3Digit(x.TongTienHang)
+                        x['GiamGia'] = formatNumber3Digit(x.GiamGia)
+                        x['TenHangHoaTang'] = x.TenHangHoa
+                        x['TenNhomHangHoaTang'] = x.TenNhomHangHoa
+                        x['details'] = [{
+                            STT: 0,
+                            SoLuongMua: '',
+                            loaiApDung: 1,// 1. giakhuyenmai, 2. giamgia
+                            txtLoaiApDung: 'Giá bán',
+                            GiaKhuyenMai: '',
+                            GiamGia: '',
+                            GiamGiaTheoPhanTram: true,
+                        }]
+                    })
+                    self.chitietKM = ctKM;
+                }
 
                 // apdung: nhanvien, chinhanh, nhomkhach
                 let chinhanhAD = await self.GetListChiNhanhApDung(idKhuyenMai);
@@ -1747,7 +1849,7 @@
                 });
                 self.isSaving = false;
 
-                let sLoai = 'Thêm mới';
+                let sLoai = 'Thêm mới', sDiary = '<b> Thông tin chi tiết: </b>';
                 let url = 'PostDM_KhuyenMai';
                 if (self.typeUpdate === 2) {
                     sLoai = 'Cập nhật';
@@ -1761,13 +1863,18 @@
                     });
 
                 if (dataKM.res) {
+                    sDiary += '<br /> Hình thức khuyến mại: '.concat(self.objKhuyenMai.TxtHinhThuc);
                     let arrCTKM = [];
                     let idKhuyenMai = dataKM.dataSoure.ID;
-                    if (self.objKhuyenMai.HinhThuc = commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG) {
+                    if (self.objKhuyenMai.HinhThuc === commonStatisJs.HinhThucKhuyenMai.HH_GIA_BAN_THEO_SO_LUONG) {
+                        let stt = 1;
                         for (let i = 0; i < ctKM.length; i++) {
                             let forOut = ctKM[i];
+                            sDiary += ' <br /> - Khi mua '.concat(!commonStatisJs.CheckNull(forOut.TenHangHoaMua) ? 'sản phầm ' + forOut.TenHangHoaMua : 'sản phầm thuộc nhóm ' + forOut.TenNhomHangHoaMua);
+
                             for (let j = 0; j < forOut.details.length; j++) {
                                 let forIn = forOut.details[j];
+                                let sDiaryDetails = ' <br /> Số lượng từ: '.concat(forIn.SoLuongMua);
                                 let obj = {
                                     ID_DonViQuiDoiMua: forOut.ID_DonViQuiDoiMua,
                                     ID_NhomHangHoaMua: forOut.ID_NhomHangHoaMua,
@@ -1775,7 +1882,7 @@
                                     ID_NhomHangHoa: null,
                                     TongTienHang: 0,
 
-                                    STT: j + 1,
+                                    STT: stt,
                                     SoLuongMua: forIn.SoLuongMua,
                                 }
                                 if (forIn.loaiApDung === 1) {
@@ -1783,15 +1890,20 @@
                                     obj.GiaKhuyenMai = forIn.GiaKhuyenMai;
                                     obj.GiamGia = 0;
                                     obj.GiamGiaTheoPhanTram = false;
+                                    sDiaryDetails += ', giá bán: '.concat(forIn.GiaKhuyenMai);
                                 }
                                 else {
                                     // giamgia
                                     obj.GiaKhuyenMai = 0;
                                     obj.GiamGia = forIn.GiaKhuyenMai;
                                     obj.GiamGiaTheoPhanTram = forIn.GiamGiaTheoPhanTram;
+                                    sDiaryDetails += ', giảm giá: '.concat(forIn.GiaKhuyenMai, forIn.GiamGiaTheoPhanTram ? '%' : 'đ');
                                 }
+                                sDiary += sDiaryDetails;
                                 arrCTKM.push(obj);
+                                stt += 1;
                             }
+
                         }
                     }
                     else {
@@ -1799,6 +1911,80 @@
                             x.STT = index + 1
                         });
                         arrCTKM = ctKM;
+
+                        let sDiaryDetails = '';
+                        switch (self.objKhuyenMai.HinhThuc) {
+                            case commonStatisJs.HinhThucKhuyenMai.HD_GIAM_GIAHD:
+                                {
+                                    for (let i = 0; i < ctKM.length; i++) {
+                                        let itFor = ctKM[i];
+                                        sDiaryDetails += '<br /> Tổng tiền hàng từ: '.concat(itFor.TongTienHang, ', giảm giá ', itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '%' : 'đ');
+                                    }
+                                }
+                                break;
+                            case commonStatisJs.HinhThucKhuyenMai.HD_TANG_HANG:
+                                {
+                                    for (let i = 0; i < ctKM.length; i++) {
+                                        let itFor = ctKM[i];
+                                        sDiaryDetails += '<br /> Tổng tiền hàng từ: '.concat(itFor.TongTienHang, ', tặng ', itFor.SoLuong, !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang);
+                                    }
+                                }
+                                break;
+                            case commonStatisJs.HinhThucKhuyenMai.HD_GIAM_GIA_HANG:
+                                {
+                                    for (let i = 0; i < ctKM.length; i++) {
+                                        let itFor = ctKM[i];
+                                        sDiaryDetails += '<br /> Tổng tiền hàng từ: '.concat(itFor.TongTienHang, ', giảm giá ', itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '%' : 'đ',
+                                            !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang);
+                                    }
+                                }
+                                break;
+                            case commonStatisJs.HinhThucKhuyenMai.HD_TANG_DIEM:
+                                {
+                                    for (let i = 0; i < ctKM.length; i++) {
+                                        let itFor = ctKM[i];
+                                        sDiaryDetails += '<br /> Tổng tiền hàng từ: '.concat(itFor.TongTienHang, ', tặng ', itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '%' : 'đ', ' điểm');
+                                    }
+                                }
+                                break;
+                            case commonStatisJs.HinhThucKhuyenMai.HH_GIAM_GIA_HANG:
+                                {
+                                    for (let i = 0; i < ctKM.length; i++) {
+                                        let itFor = ctKM[i];
+                                        sDiaryDetails += '<br /> Mua '.concat(itFor.SoLuongMua,
+                                            !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : 'sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được giảm giá ',
+                                            itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '% ' : 'đ ', itFor.SoLuong,
+                                            !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang, ' được giảm giá ',
+                                        );
+                                    }
+                                }
+                                break;
+                            case commonStatisJs.HinhThucKhuyenMai.HH_TANG_HANG:
+                                {
+                                    for (let i = 0; i < ctKM.length; i++) {
+                                        let itFor = ctKM[i];
+                                        sDiaryDetails += '<br /> Mua '.concat(itFor.SoLuongMua,
+                                            !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : 'sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được tặng ',
+                                            itFor.SoLuong,
+                                            !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : 'sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang
+                                        );
+                                    }
+                                }
+                                break;
+                            case commonStatisJs.HinhThucKhuyenMai.HH_TANG_DIEM:
+                                {
+                                    for (let i = 0; i < ctKM.length; i++) {
+                                        let itFor = ctKM[i];
+                                        sDiaryDetails += '<br /> Mua '.concat(itFor.SoLuongMua,
+                                            !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được tặng ',
+                                            itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '%' : 'đ', ' điểm'
+                                        );
+                                    }
+                                }
+                                break;
+                        }
+
+                        sDiary += sDiaryDetails;
                     }
 
                     let dataCTKM = await ajaxHelper(self.BH_KhuyenMaiAPI + 'PostDM_KhuyenMaiChiTiet?idKhuyenMai=' + idKhuyenMai, 'POST', { lstChiTietKM: arrCTKM }).done()
@@ -1807,17 +1993,18 @@
                         });
                     if (dataCTKM.res) {
                         ShowMessage_Success(sLoai + ' chương trình khuyến mại thành công');
+
                     }
 
                     if (self.objKhuyenMai.arrChiNhanhApDung.length > 0 || self.objKhuyenMai.arrNhanVienApDung.length > 0 ||
                         self.objKhuyenMai.arrNhanVienApDung.length > 0) {
-                        let arrChiNhanh = self.objKhuyenMai.arrChiNhanhApDung.map(function (x) {
+                        let arrChiNhanh = self.objKhuyenMai.arrChiNhanhApDung.filter(x => x.ID !== null).map(function (x) {
                             return x.ID;
                         });
-                        let arrNhanVien = self.objKhuyenMai.arrNhanVienApDung.map(function (x) {
+                        let arrNhanVien = self.objKhuyenMai.arrNhanVienApDung.filter(x => x.ID !== null).map(function (x) {
                             return x.ID;
                         })
-                        let arrNhomKhach = self.objKhuyenMai.arrNhomKhachApDung.map(function (x) {
+                        let arrNhomKhach = self.objKhuyenMai.arrNhomKhachApDung.filter(x => x.ID !== null).map(function (x) {
                             return x.ID;
                         })
                         let arrKMAD = [];
@@ -1895,7 +2082,19 @@
                                 return data;
                             });
                         self.saveOK = true;
+
+
                     }
+
+                    let diary = {
+                        ID_NhanVien: VHeader.IdNhanVien,
+                        ID_DonVi: VHeader.IdDonVi,
+                        ChucNang: 'Danh mục khuyến mại',
+                        NoiDung: sLoai.concat(' chương trình khuyến mại. Tên chương trình: ', self.objKhuyenMai.TenKhuyenMai),
+                        NoiDungChiTiet: sDiary,
+                        LoaiNhatKy: 3
+                    }
+                    Insert_NhatKyThaoTac_1Param(diary);
                 }
                 $('#vmThemMoiKhuyenMai').modal('hide');
             }
