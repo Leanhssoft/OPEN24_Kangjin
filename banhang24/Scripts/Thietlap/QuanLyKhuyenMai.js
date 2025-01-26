@@ -299,7 +299,6 @@
             CurrentPage: self.CurrentPage() - 1,
             PageSize: self.pageSize(),
         };
-        console.log(obj)
         ajaxHelper(BH_KhuyenMaiUri + 'GetListPromotion', 'POST', obj).done(function (x) {
             if (x.res === true) {
 
@@ -331,7 +330,6 @@
     self.getList_LichSuKhuyenMai = function () {
         ajaxHelper(BH_KhuyenMaiUri + "getList_LichSuKhuyenMai?ID_KhuyenMai=" + _id_LSKhuyenMai + "&numberPage=" + _numberPage_LS + "&PageSize=" + _numberRowns_LS, "GET").done(function (data) {
             self.BH_LichSuKhuyenMai(data.LstData);
-            console.log(data.LstData);
             if (self.BH_LichSuKhuyenMai().length > 0) {
                 self.RowsStart_LS((_numberPage_LS - 1) * _numberRowns_LS + 1);
                 self.RowsEnd_LS((_numberPage_LS - 1) * _numberRowns_LS + self.BH_LichSuKhuyenMai().length)
@@ -566,13 +564,11 @@
         var thisDate = $(this).val().trim();
         var a = thisDate.split(" ");
         _timeEnd = a[0].split("/").reverse().join("-") + " " + a[1];
-        console.log(_timeEnd);
     });
     $('#datetimepicker_mask').change(function (e) {
         var thisDate = $(this).val().trim();
         var a = thisDate.split(" ");
         _timeStart = a[0].split("/").reverse().join("-") + " " + a[1];
-        console.log(_timeStart);
     });
 
 
