@@ -971,6 +971,7 @@ namespace banhang24.Areas.DanhMuc.Controllers
                         x.ThuApDung,
                         x.GioApDung,
                         x.GhiChu,
+                        x.ApDungNgaySinhNhat,
                         x.TatCaDonVi,
                         x.TatCaNhanVien,
                         x.TatCaDoiTuong,
