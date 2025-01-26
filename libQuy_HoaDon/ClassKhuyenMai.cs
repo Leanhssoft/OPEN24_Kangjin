@@ -600,6 +600,7 @@ namespace libQuy_HoaDon
                       select new
                       {
                           kmct.STT,
+                          KC.HinhThuc,
                           kmct.ID,
                           kmct.ID_KhuyenMai,
                           kmct.ID_DonViQuiDoi,
@@ -617,7 +618,7 @@ namespace libQuy_HoaDon
                           DiemCong = kmct.GiamGia,
                           TenHangHoaMua = THM.TenHangHoa,
                           MaHangHoaMua = TM == null ? "" : TM.MaHangHoa,
-                          GiaBan_HangMua = TM == null ? TM.GiaBan : 0,
+                          GiaBan_HangMua = TM == null ? 0 : TM.GiaBan,
                           TenNhomHangHoaMua = TNHM.TenNhomHangHoa,
                           GiaBan_HangTang = MD == null ? 0 : MD.GiaBan,
                       });
