@@ -1410,7 +1410,7 @@ var cmpDropdownMultipleItem = {
                                     v-model="textSearch" 
                                     v-on:click="showList"
                                     v-on:keyup="search">
-                        <ul >
+                        <ul  v-on:click="showList">
                             <li v-for="(item,index) in listChosed">
                                 <span> {{item.Text1}}
                                 </span> <span v-if="colshow > 1">  - </span>
@@ -1470,7 +1470,7 @@ var cmpDropdownMultipleItem = {
             var self = this;
             $(event.currentTarget).next().show();
             // khi request data sẵn từ DB, nhưng ở created chưa lấy dc data: gán lại data
-            if(self.haveCondition && self.listAfter.length == 0){
+            if(self.haveCondition){
                 self.listAfter = self.listAll;
             }
         },
