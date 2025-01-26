@@ -697,7 +697,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-10 col-lg-offset-2 flex flex-row">
-                                <input type="checkbox" />
+                                <input type="checkbox" value="1" v-model="objKhuyenMai.ApDungNgaySinhNhat" />
                                 <label>
                                     Áp dụng vào <a>Ngày sinh nhật</a>
                                 </label>
@@ -1111,19 +1111,19 @@
 
                 $('#vmThemMoiKhuyenMai').modal('show');
             },
-            showModalUpdate: async function (idKhuyenMai) {
+            showModalUpdate: async function (idKhuyenMai, typeUpdate = 2) {
                 let self = this;
-                self.typeUpdate = 2;
+                self.typeUpdate = typeUpdate;// 1.insert/saochep, 2. update
                 self.saveOK = false;
                 self.isSaving = false;
                 let dataKM = await self.GetDMKhuyenMai_byId(idKhuyenMai);
                 let ctKM = await self.GetChiTietKhuyenMai_byIdKhuyenMai(idKhuyenMai);
 
                 if (dataKM !== null) {
-                    self.objKhuyenMai.ID = dataKM.ID;
+                    self.objKhuyenMai.ID = typeUpdate === 1 ? const_GuidEmpty : dataKM.ID;
                     self.objKhuyenMai.LoaiKhuyenMai = dataKM.LoaiKhuyenMai;
                     self.objKhuyenMai.HinhThuc = dataKM.HinhThuc;
-                    self.objKhuyenMai.MaKhuyenMai = dataKM.MaKhuyenMai;
+                    self.objKhuyenMai.MaKhuyenMai = typeUpdate === 1 ? '' : dataKM.MaKhuyenMai;
                     self.objKhuyenMai.TenKhuyenMai = dataKM.TenKhuyenMai;
                     self.objKhuyenMai.ThoiGianBatDau = dataKM.ThoiGianBatDau;
                     self.objKhuyenMai.ThoiGianKetThuc = dataKM.ThoiGianKetThuc;
@@ -1131,24 +1131,25 @@
                     self.objKhuyenMai.TatCaDoiTuong = dataKM.TatCaDoiTuong;
                     self.objKhuyenMai.TatCaDonVi = dataKM.TatCaDonVi;
                     self.objKhuyenMai.TatCaNhanVien = dataKM.TatCaNhanVien;
+                    self.objKhuyenMai.ApDungNgaySinhNhat = dataKM.ApDungNgaySinhNhat.toString();
                     self.objKhuyenMai.TrangThai = dataKM.TrangThai === true ? '1' : '0';
                     self.objKhuyenMai.TxtLoaiKhuyenMai = dataKM.LoaiKhuyenMai === commonStatisJs.LoaiKhuyenMai.HOA_DON ? 'Hóa đơn' : 'Hàng hóa';
                     let loaiKM = self.ArrHinhThucKhuyenMai.filter(x => x.ID === dataKM.HinhThuc);
                     self.objKhuyenMai.TxtHinhThuc = loaiKM.length > 0 ? loaiKM[0].Text2 : '';
 
-                    let arrThang = self.objKhuyenMai.ThangApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
+                    let arrThang = dataKM.ThangApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
                         let a = x; b = y;
                         return a > b ? 1 : a < b ? -1 : 0
                     });
-                    let arrNgay = self.objKhuyenMai.NgayApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
+                    let arrNgay = dataKM.NgayApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
                         let a = x; b = y;
                         return a > b ? 1 : a < b ? -1 : 0
                     });
-                    let arrThu = self.objKhuyenMai.ThuApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
+                    let arrThu = dataKM.ThuApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
                         let a = x; b = y;
                         return a > b ? 1 : a < b ? -1 : 0
                     });
-                    let arrGio = self.objKhuyenMai.GioApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
+                    let arrGio = dataKM.GioApDung.split(',').filter(x => x !== '').map(Number).sort(function (x, y) {
                         let a = x; b = y;
                         return a > b ? 1 : a < b ? -1 : 0
                     });
@@ -1853,6 +1854,8 @@
                     x.STT = index + 1
                 });
                 self.isSaving = false;
+                myData.objKhuyenMai.TrangThai = self.objKhuyenMai.TrangThai == '1' ? true : false;
+                myData.objKhuyenMai.ApDungNgaySinhNhat = self.objKhuyenMai.ApDungNgaySinhNhat ? 1 : 0;
 
                 let sLoai = 'Thêm mới', sDiary = '<b> Thông tin chi tiết: </b>', sDiaryOld = '';
                 let url = 'PostDM_KhuyenMai';
@@ -1860,7 +1863,6 @@
                     sLoai = 'Cập nhật';
                     url = 'PutDM_KhuyenMai';
                     myData.objKhuyenMai.NguoiSua = VHeader.UserLogin;
-                    myData.objKhuyenMai.TrangThai = self.objKhuyenMai.TrangThai == '1' ? true : false;
 
                     sDiaryOld = '<br /> <b> Thông tin cũ: </b>';
                     sDiaryOld += '<br />- Mã chương trình: '.concat(self.objKhuyenMaiOld.MaKhuyenMai,
@@ -1946,7 +1948,7 @@
                                     for (let j = 0; j < forOut.details.length; j++) {
                                         let forIn = forOut.details[j];
                                         let sDiaryDetailsOld = ' <br />- Số lượng từ: '.concat(forIn.SoLuongMua);
-                                        
+
                                         if (forIn.loaiApDung === 1) {
                                             sDiaryDetailsOld += ', giá bán: '.concat(forIn.GiaKhuyenMai);
                                         }
@@ -2185,10 +2187,8 @@
                             .then(function (data) {
                                 return data;
                             });
-                        self.saveOK = true;
-
-
                     }
+                    self.saveOK = true;
 
                     let diary = {
                         ID_NhanVien: VHeader.IdNhanVien,
