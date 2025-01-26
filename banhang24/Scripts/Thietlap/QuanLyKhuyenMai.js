@@ -749,14 +749,17 @@
 
     }
     Page_Load();
+
+    self.GetListPromotion = function () {
+        GetListPromotion();
+    }
 }
 var vmKhuyenMai = new ViewModel();
 ko.applyBindings(vmKhuyenMai);
 
-
 $('#vmThemMoiKhuyenMai').on('hidden.bs.modal', function () {
     if (vmThemMoiKhuyenMai.saveOK) {
-        GetListPromotion();
+        vmKhuyenMai.GetListPromotion();
     }
 })
 

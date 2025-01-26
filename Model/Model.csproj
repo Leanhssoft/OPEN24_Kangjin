@@ -163,7 +163,6 @@
     <Compile Include="DTO\DM_HangHoaDTO.cs" />
     <Compile Include="DTO\DM_ViTriDTO.cs" />
     <Compile Include="DTO\HD_DTO.cs" />
-    <Compile Include="DTO\KhuyenMaiDTO.cs" />
     <Compile Include="Gara_DanhMucXe.cs" />
     <Compile Include="Gara_GiayToKemTheo.cs" />
     <Compile Include="Gara_HangMucSuaChua.cs" />

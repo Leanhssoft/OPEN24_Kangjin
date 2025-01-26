@@ -1131,7 +1131,7 @@
                     self.objKhuyenMai.TatCaDoiTuong = dataKM.TatCaDoiTuong;
                     self.objKhuyenMai.TatCaDonVi = dataKM.TatCaDonVi;
                     self.objKhuyenMai.TatCaNhanVien = dataKM.TatCaNhanVien;
-                    self.objKhuyenMai.ApDungNgaySinhNhat = dataKM.ApDungNgaySinhNhat.toString();
+                    self.objKhuyenMai.ApDungNgaySinhNhat = dataKM.ApDungNgaySinhNhat;
                     self.objKhuyenMai.TrangThai = dataKM.TrangThai === true ? '1' : '0';
                     self.objKhuyenMai.TxtLoaiKhuyenMai = dataKM.LoaiKhuyenMai === commonStatisJs.LoaiKhuyenMai.HOA_DON ? 'Hóa đơn' : 'Hàng hóa';
                     let loaiKM = self.ArrHinhThucKhuyenMai.filter(x => x.ID === dataKM.HinhThuc);
@@ -2058,7 +2058,7 @@
                                     for (let i = 0; i < ctKM.length; i++) {
                                         let itFor = ctKM[i];
                                         sDiaryDetails += '<br /> Mua '.concat(itFor.SoLuongMua,
-                                            !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : 'sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được giảm giá ',
+                                            !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được giảm giá ',
                                             itFor.GiamGia, itFor.GiamGiaTheoPhanTram ? '% ' : 'đ ', itFor.SoLuong,
                                             !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang, ' được giảm giá ',
                                         );
@@ -2070,9 +2070,9 @@
                                     for (let i = 0; i < ctKM.length; i++) {
                                         let itFor = ctKM[i];
                                         sDiaryDetails += '<br /> Mua '.concat(itFor.SoLuongMua,
-                                            !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : 'sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được tặng ',
+                                            !commonStatisJs.CheckNull(itFor.TenHangHoaMua) ? ' sản phẩm: ' + itFor.TenHangHoaMua : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaMua, ' được tặng ',
                                             itFor.SoLuong,
-                                            !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : 'sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang
+                                            !commonStatisJs.CheckNull(itFor.TenHangHoaTang) ? ' sản phẩm: ' + itFor.TenHangHoaTang : ' sản phẩm thuộc nhóm: ' + itFor.TenNhomHangHoaTang
                                         );
                                     }
                                 }
