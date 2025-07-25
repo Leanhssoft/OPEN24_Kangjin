@@ -151,6 +151,35 @@
             Value: 13
         }
         ]);
+        LocalCaches.CheckColumnGridWithObj(Key_Form + $('#ID_nhatkysdv2').val(), [{
+            NameClass: "nhomkhach",
+            Value: 2
+        },
+        {
+            NameClass: "nguonkhach",
+            Value: 3
+        },
+        {
+            NameClass: "dienthoai",
+            Value: 4
+        },
+        {
+            NameClass: "gioitinh",
+            Value: 5
+        },
+        {
+            NameClass: "nguoigioithieu",
+            Value: 6
+        },
+        {
+            NameClass: "nhomhanghoa",
+            Value: 7
+        },
+        {
+            NameClass: "ghichu",
+            Value: 13
+        }
+        ]);
     }
     function loadHtmlGrid() {
         var KeyLo = Key_Form + self.columnCheckType() + "_LOHANG";
@@ -670,6 +699,7 @@
     };
     self.tab_SoDu = ko.observable(1);
     self.tab_NhatKySuDung = ko.observable(1);
+    self.tab_NhatKySuDungV2 = ko.observable(1);
 
     self.SelectRepoert_NhomHangHoa = function (item) {
         _ID_NhomHang = item.ID;
@@ -830,6 +860,14 @@
                     $("#txt_search").attr("placeholder", "Theo mã, tên hàng, mã gói dịch vụ").blur();
                     self.LoaiBaoCao('hàng hóa');
                     self.MoiQuanTam('Báo cáo nhập xuất tồn dịch vụ');
+                }
+                break;
+            case 5:
+                {
+                    $('.showNameKH').hide();
+                    $("#txt_search").attr("placeholder", "Theo mã chứng từ, khách hàng").blur();
+                    self.LoaiBaoCao('hàng hóa');
+                    self.MoiQuanTam('Nhật ký sử dụng gói dịch vụ v2');
                 }
                 break;
         }
@@ -1194,6 +1232,7 @@
     self.BaoCaoGoiDichVu_SoDuTongHop = ko.observableArray();
     self.BaoCaoGoiDichVu_SoDuChiTiet = ko.observableArray();
     self.BaoCaoGoiDichVu_NhatKySuDungTongHop = ko.observableArray();
+    self.BaoCaoGoiDichVu_NhatKySuDungTongHopV2 = ko.observableArray();
     self.BaoCaoGoiDichVu_NhatKySuDungChiTiet = ko.observableArray();
     self.BaoCaoGoiDichVu_TonChuaSuDung = ko.observableArray();
     self.BaoCaoGoiDichVu_NhapXuatTon = ko.observableArray();
@@ -1216,8 +1255,10 @@
     self.SDCT_GiaVon = ko.observable();
     self.NKTH_SoLuong = ko.observable();
     self.NKTH_SoLuongSuDung = ko.observable();
+    self.NKTH_GiaTriSuDung = ko.observable();
     self.NKTH_SoLuongTra = ko.observable();
     self.NKTH_SoLuongConLai = ko.observable();
+    self.NKTH_GiaTriConLai = ko.observable();
 
     self.NKCT_SoLuong = ko.observable();
     self.NKCT_SoLuongSuDung = ko.observable();
@@ -1416,6 +1457,38 @@
                     });
                 }
                 break;
+
+
+            case 5: {
+
+                let param = {
+                    IDChiNhanhs: array_Seach.lstIDChiNhanh,
+                    lstIDChiNhanh: array_Seach.lstIDChiNhanh,
+                    timeStart: _timeStart,
+                    timeEnd: _timeEnd,
+                    MaHangHoa: array_Seach.MaHangHoa,
+                    ID_NhomHang: _ID_NhomHang,
+                    TinhTrang: TinhTrangHH,
+                    ThoiHanSuDung: ThoiHanSuDung,
+                    CurrentPage: self.currentPage() > 0 ? self.currentPage() - 1 : self.currentPage(),
+                    PageSize: self.pageSize(),
+                }
+
+                ajaxHelper(ReportUri + "BaoCaoDichVu_NhatKySuDungTongHop", "POST", param).done(function (data) {
+                    self.BaoCaoGoiDichVu_NhatKySuDungTongHopV2(data.LstData);
+                    AllPage = data.numberPage;
+                    self.ResetCurrentPage();
+                    self.SumRowsHangHoa(data.Rowcount);
+                    self.NKTH_SoLuong(data.a1);
+                    self.NKTH_SoLuongTra(data.a2);
+                    self.NKTH_SoLuongSuDung(data.a3);
+                    self.NKTH_SoLuongConLai(data.a4);
+                    self.NKTH_GiaTriSuDung(data.a5);
+                    self.NKTH_GiaTriConLai(data.a6);
+                    LoadingForm(false);
+                });
+            }
+            break;
         }
     };
     self.BaoCaoGoiDichVu_SoDuTongHop_Page = ko.computed(function (x) {
@@ -1448,6 +1521,23 @@
                     self.RowsEnd('0');
                 }
                 return self.BaoCaoGoiDichVu_SoDuChiTiet().slice(first, first + self.pageSize());
+            }
+        }
+        return [];
+    });
+    self.BaoCaoGoiDichVu_NhatKySuDungTongHop_PageV2 = ko.computed(function (x) {
+        if (self.check_MoiQuanTam() === 5) {
+            var first = (self.currentPage() - 1) * self.pageSize();
+            if (self.BaoCaoGoiDichVu_NhatKySuDungTongHopV2() !== null) {
+                if (self.BaoCaoGoiDichVu_NhatKySuDungTongHopV2().length !== 0) {
+                    self.RowsStart((self.currentPage() - 1) * self.pageSize() + 1);
+                    self.RowsEnd((self.currentPage() - 1) * self.pageSize() + self.BaoCaoGoiDichVu_NhatKySuDungTongHopV2().slice(first, first + self.pageSize()).length);
+                }
+                else {
+                    self.RowsStart('0');
+                    self.RowsEnd('0');
+                }
+                return self.BaoCaoGoiDichVu_NhatKySuDungTongHopV2().slice(first, first + self.pageSize());
             }
         }
         return [];
@@ -1834,6 +1924,9 @@
                 else if (self.check_MoiQuanTam() === 4 && self.BaoCaoGoiDichVu_NhapXuatTon().length !== 0) {
                     await commonStatisJs.NPOI_ExportExcel(ReportUri + 'Export_BCGDV_NhapXuatTon', 'POST', { objExcel: array_Seach }, "BaoCaoNhapXuatTonDichVu.xlsx");
                 }
+                else if (self.check_MoiQuanTam() === 5 && self.BaoCaoGoiDichVu_NhatKySuDungTongHopV2().length !== 0) {
+                    await commonStatisJs.NPOI_ExportExcel(ReportUri + 'Export_BCGDV_NhatKySuDungTongHop', 'POST', { objExcel: array_Seach }, "NhatKySuDungGoiDichVuV2.xlsx");
+                }
                 else {
                     bottomrightnotify('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> ' + "Báo cáo không có dữ liệu", "danger");
                     LoadingForm(false);
@@ -2078,10 +2171,17 @@
                     self.ReserPage();
                 }
                 break;
+            case 5:
+                {
+                    AllPage = Math.ceil(self.BaoCaoGoiDichVu_NhatKySuDungTongHopV2().length / self.pageSize());
+                    self.ReserPage();
+                }
+                break;
         }
     };
 
     self.hide = function () {
+        debugger;
         self.loadCheckbox(self.columnCheckType());
         var strPrint = '';
         $('#table-reponsivetr .tab-pane').each(function () {

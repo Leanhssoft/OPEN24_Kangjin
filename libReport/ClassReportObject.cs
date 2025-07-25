@@ -1217,7 +1217,9 @@ namespace libReport
         public double SoLuongMua { get; set; }
         public double SoLuongTra { get; set; }
         public double SoLuongSuDung { get; set; }
+        public double GiaTriSD { get; set; }
         public double SoLuongConLai { get; set; }
+        public double GiaTriConLai { get; set; }
     }
 
     public class BaoCaoGoiDichVu_NhatKySuDungChiTietPRC
