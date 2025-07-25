@@ -122,7 +122,7 @@ namespace libReport
             try
             {
                 List<SqlParameter> sql = new List<SqlParameter>();
-                sql.Add(new SqlParameter("Text_Search", MaHangHoa));
+                sql.Add(new SqlParameter("Text_Search", MaHangHoa ?? ""));
                 sql.Add(new SqlParameter("timeStart", timeStart));
                 sql.Add(new SqlParameter("timeEnd", timeEnd));
                 sql.Add(new SqlParameter("ID_ChiNhanh", ID_ChiNhanh));

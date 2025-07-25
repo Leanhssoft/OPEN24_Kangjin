@@ -114,7 +114,7 @@ namespace banhang24.Models
         public string TenChiNhanh { get; set; }
         public List<string> lstIDChiNhanh { get; set; }
     }
-    public class array_BaoCaoGoiDichVu
+    public class array_BaoCaoGoiDichVu : Param_ReportText
     {
         public string MaHangHoa { get; set; }
         public string MaKhachHang { get; set; }

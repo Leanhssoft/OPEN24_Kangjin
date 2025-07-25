@@ -19,6 +19,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using static banhang24.Hellper.commonEnum;
 
 
 namespace banhang24.Areas.DanhMuc.Controllers
@@ -2402,6 +2403,9 @@ namespace banhang24.Areas.DanhMuc.Controllers
                 double SoLuongTra = lst.Sum(x => x.SoLuongTra);
                 double SoLuongSuDung = lst.Sum(x => x.SoLuongSuDung);
                 double SoLuongConLai = lst.Sum(x => x.SoLuongConLai);
+                double TongGiaTriSD = lst.Sum(x => x.GiaTriSD);
+                double TongGiaTriConLai = lst.Sum(x => x.GiaTriConLai);
+
                 int lstPages = getNumber_Page(Rown, 10);
                 JsonResultExampleTr<BaoCaoGoiDichVu_NhatKySuDungTongHopPRC> json = new JsonResultExampleTr<BaoCaoGoiDichVu_NhatKySuDungTongHopPRC>
                 {
@@ -2411,7 +2415,9 @@ namespace banhang24.Areas.DanhMuc.Controllers
                     a1 = Math.Round(SoLuongMua, 3, MidpointRounding.ToEven),
                     a2 = Math.Round(SoLuongTra, 3, MidpointRounding.ToEven),
                     a3 = Math.Round(SoLuongSuDung, 3, MidpointRounding.ToEven),
-                    a4 = Math.Round(SoLuongConLai, 3, MidpointRounding.ToEven)
+                    a4 = Math.Round(SoLuongConLai, 3, MidpointRounding.ToEven),
+                    a5 = Math.Round(TongGiaTriSD, 3, MidpointRounding.ToEven),
+                    a6 = Math.Round(TongGiaTriConLai, 3, MidpointRounding.ToEven)
                 };
                 return Json(json);
             }
@@ -2548,6 +2554,7 @@ namespace banhang24.Areas.DanhMuc.Controllers
                 db.Database.CommandTimeout = 60 * 60;
                 ClassReportGoiDichVu reportGoiDichVu = new ClassReportGoiDichVu(db);
                 Class_officeDocument classOffice = new Class_officeDocument(db);
+                ClassNPOIExcel classNPOI = new ClassNPOIExcel();
                 List<BaoCaoGoiDichVu_NhatKySuDungTongHopPRC> lst = new List<BaoCaoGoiDichVu_NhatKySuDungTongHopPRC>();
                 string TheoDoi = "%%";
                 string TrangThai = "%%";
@@ -2582,13 +2589,17 @@ namespace banhang24.Areas.DanhMuc.Controllers
                 excel.Columns.Remove("ThuocTinh_GiaTri");
                 //excel.Columns.Remove("TenDonViTinh");
                 //excel.Columns.Remove("TenLoHang");
-                string fileTeamplate = HttpContext.Current.Server.MapPath("~/Template/ExportExcel/Report/BaoCaoGoiDichVu/Teamplate_TongHopNhatKySuDungGoiDichVu.xlsx");
-                string fileSave = HttpContext.Current.Server.MapPath("~/Template/ExportExcel/Report/BaoCaoGoiDichVu/TongHopNhatKySuDungGoiDichVu.xlsx");
-                fileSave = classOffice.createFolder_Download(fileSave);
-                classOffice.listToOfficeExcel_Stype(fileTeamplate, fileSave, excel, 4, 28, 24, true, array_BaoCaoGoiDichVu.columnsHide, array_BaoCaoGoiDichVu.TodayBC, array_BaoCaoGoiDichVu.TenChiNhanh);
-                HttpResponse Response = HttpContext.Current.Response;
-                fileSave = classOffice.createFolder_Export("~/Template/ExportExcel/Report/BaoCaoGoiDichVu/TongHopNhatKySuDungGoiDichVu.xlsx");
-                return fileSave;
+                string fileTeamplate = HttpContext.Current.Server.MapPath("~/Template/ExportExcel/Report/BaoCaoGoiDichVu/Teamplate_NhatKySuDungGoiDichVuV2.xlsx");
+
+                string columHide = string.Empty;
+                if (array_BaoCaoGoiDichVu.ColumnHide != null)
+                {
+                    columHide = string.Join("_", array_BaoCaoGoiDichVu.ColumnHide);
+                }
+
+                List<ClassExcel_CellData> lstCell = classNPOI.GetValue_forCell(array_BaoCaoGoiDichVu.TenChiNhanh, array_BaoCaoGoiDichVu.TodayBC);
+                classNPOI.ExportDataToExcel(fileTeamplate, excel, 4, columHide, lstCell);
+                return string.Empty;
             }
         }
         [AcceptVerbs("GET", "POST")]
@@ -10601,6 +10612,9 @@ namespace banhang24.Areas.DanhMuc.Controllers
                             break;
                         case (int)commonEnum.TypeReport.nhatkysdct:
                             data = commonEnum.TypeRGoiDichVuNhatKyCT.ToList();
+                            break;
+                        case (int)commonEnum.TypeReport.nhatkysdv2:
+                            data = commonEnum.TypeRGoiDichVuNhatKySDV2.ToList();
                             break;
                         case (int)commonEnum.TypeReport.tonchuasudung:
                             data = commonEnum.TypeRGoiDichVuTonChuaSD.ToList();

@@ -595,6 +595,7 @@ namespace banhang24.Hellper
             hoahongth,
             hoahongct,
             khachhang_tansuat,
+            nhatkysdv2
         }
         public enum TypeColumnNhanVien
         {
@@ -1678,6 +1679,34 @@ namespace banhang24.Hellper
 
         };
         public static Dictionary<string, string> TypeRGoiDichVuNhatKyCT = new Dictionary<string, string>()
+        {
+             { ColumnInvoices.bienso.ToString(),"Biển số xe" },
+             { ColumnInvoices.machuxe.ToString(),"Mã chủ xe" },
+             { ColumnInvoices.tenchuxe.ToString(),"Tên chủ xe" },
+            { TypeRGoiDichVu.makhach.ToString(),"Mã khách" },
+             { TypeRGoiDichVu.tenkhach.ToString(),"Tên khách" },
+             { TypeRGoiDichVu.nhomkhach.ToString(),"Nhóm khách" },
+             { TypeRGoiDichVu.nguonkhach.ToString(),"Nguồn khách" },
+             { TypeRGoiDichVu.dienthoai.ToString(),"Điện thoại" },
+             { TypeRGoiDichVu.gioitinh.ToString(),"Giới tính" },
+             { TypeRGoiDichVu.nguoigioithieu.ToString(),"Người giới thiệu" },
+             { TypeRGoiDichVu.magoi.ToString(),"Mã gói DV" },
+             { TypeRGoiDichVu.mahoadon.ToString(),"Mã hóa đơn" },
+             { TypeRGoiDichVu.ngayapdung.ToString(),"Ngày sử dụng" },
+             { TypeRGoiDichVu.nhomhanghoa.ToString(),"Nhóm hàng hóa" },
+             { TypeRGoiDichVu.mahanghoa.ToString(),"Mã hàng hóa" },
+             { TypeRGoiDichVu.tenhanghoa.ToString(),"Tên hàng hóa" },
+             { TypeRGoiDichVu.donvitinh.ToString(),"Đvt" },
+             { TypeRGoiDichVu.lohanghoa.ToString(),"Lô hàng" },
+             { TypeRGoiDichVu.soluongban.ToString(),"Số lượng" },
+             { TypeReportTotal.Total_doanhthuthuan.ToString(),"Giá trị" },
+             { TypeReportTotal.Total_tienvon.ToString(),"Tiền vốn" },
+             { TypeRGoiDichVu.nhanvien.ToString(),"Nhân viên thực hiện" },
+             { TypeRGoiDichVu.ghichu.ToString(),"Ghi chú" },
+
+        };
+
+        public static Dictionary<string, string> TypeRGoiDichVuNhatKySDV2 = new Dictionary<string, string>()
         {
              { ColumnInvoices.bienso.ToString(),"Biển số xe" },
              { ColumnInvoices.machuxe.ToString(),"Mã chủ xe" },
